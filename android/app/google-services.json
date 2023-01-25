@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "297638675861",
+    "project_id": "att-blue",
+    "storage_bucket": "att-blue.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:297638675861:android:607a27cad3a9984a0f629c",
+        "android_client_info": {
+          "package_name": "com.example.att_blue"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "297638675861-srp1l2n8igu1ovd7p8c0t9f3e3ii2cp5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCb39Om8VqZ0TPoCaTbb3Lpbmcg86N4Yk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "297638675861-srp1l2n8igu1ovd7p8c0t9f3e3ii2cp5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
