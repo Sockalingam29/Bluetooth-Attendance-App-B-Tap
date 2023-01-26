@@ -26,12 +26,29 @@ class _StudentHomePageState extends State<StudentHomePage> {
           ElevatedButton(
             child: const Text("Start Discovery"),
             onPressed: () async {
+              if (!await Nearby().askLocationPermission()) {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text("Location permissions not granted :(")));
+              }
+
+              if (!await Nearby().enableLocationServices()) {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text("Enabling Location Service Failed :(")));
+              }
+
+              if (!await Nearby().checkBluetoothPermission()) {
+                Nearby().askBluetoothPermission();
+                // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                //     content: Text("Bluetooth permissions not granted :(")));
+              }
+
               try {
                 bool a = await Nearby().startDiscovery(
                   userName,
                   strategy,
                   onEndpointFound: (id, name, serviceId) {
                     // show sheet automatically to request connection
+
                     showModalBottomSheet(
                       context: context,
                       builder: (builder) {
