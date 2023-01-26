@@ -3,11 +3,14 @@
 import 'dart:math';
 
 // import 'package:att_blue/pages/student_list.dart';
+import 'package:att_blue/models/sub.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:nearby_connections/nearby_connections.dart';
+
+import 'list.dart';
 
 class StaffHomePage extends StatefulWidget {
   const StaffHomePage({Key? key}) : super(key: key);
@@ -25,8 +28,8 @@ class _StaffHomePage extends State<StaffHomePage> {
   TextEditingController dateController = TextEditingController();
 
   final String userName = Random().nextInt(10000).toString();
-  final Strategy strategy = Strategy.P2P_STAR;
-  Map<String, ConnectionInfo> endpointMap = Map();
+  final Strategy strategy = Strategy.P2P_STAR; //1 to N
+  Map<String, ConnectionInfo> endpointMap = Map(); //connection details
 
   String? tempFileUri; //reference to the file currently being transferred
   Map<int, String> map =
@@ -202,6 +205,17 @@ class _StaffHomePage extends State<StaffHomePage> {
                   await Nearby().stopAdvertising();
                 },
               ),
+              ElevatedButton(
+                  onPressed: () {
+                    // Subdetails SD = Subdetails();
+                    // SD.subname = dropdownvalue2;
+
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return ItemList();
+                    }));
+                  },
+                  child: const Text("Student List")),
             ],
           ),
         ),
