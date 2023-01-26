@@ -1,9 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:att_blue/auth.dart';
-import 'package:att_blue/pages/home_page.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:nearby_connections/nearby_connections.dart';
 
 class StaffHomePage extends StatefulWidget {
   const StaffHomePage({Key? key}) : super(key: key);
@@ -45,7 +46,24 @@ class _StaffHomePage extends State<StaffHomePage> {
 
   Widget _takeAttendance() {
     return ElevatedButton(
-        child: const Text('Take Attendance'), onPressed: () {});
+        child: const Text('Take Attendance'),
+        onPressed: () async {
+          if (!await Nearby().askLocationPermission()) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text("Location permissions not granted :(")));
+          }
+
+          if (!await Nearby().enableLocationServices()) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text("Enabling Location Service Failed :(")));
+          }
+
+          if (!await Nearby().checkBluetoothPermission()) {
+            Nearby().askBluetoothPermission();
+            // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            //     content: Text("Bluetooth permissions not granted :(")));
+          }
+        });
   }
 
   // Widget _logOutBtn() {

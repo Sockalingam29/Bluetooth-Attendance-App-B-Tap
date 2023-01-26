@@ -63,10 +63,11 @@ class _LoginState extends State<Login> {
                   .user;
 
               if (firebaseUser != null) {
-                if (!email.toLowerCase().endsWith('@student.tce.edu')) {
+                if (email.toLowerCase().endsWith('@student.tce.edu')) {
                   Get.toNamed('/studentHome');
+                } else {
+                  Get.toNamed('/staffHome');
                 }
-                Get.toNamed('/staffHome');
                 // ignore: use_build_context_synchronously
                 // Navigator.pushNamed(context, '/home');
               }
