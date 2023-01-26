@@ -23,7 +23,7 @@ class _RegisterState extends State<Register> {
   final TextEditingController _nameCtrl = TextEditingController();
   final TextEditingController _emailCtrl = TextEditingController();
   final TextEditingController _passwordCtrl = TextEditingController();
-  final TextEditingController _phonenoCtrl = TextEditingController();
+  final TextEditingController _regNoCtrl = TextEditingController();
 
   User? currentUser = FirebaseAuth.instance.currentUser;
 
@@ -56,7 +56,7 @@ class _RegisterState extends State<Register> {
         onPressed: () async {
           var name = _nameCtrl.text.trim();
           var email = _emailCtrl.text.trim();
-          var phoneno = _phonenoCtrl.text.trim();
+          var regno = _regNoCtrl.text.trim();
           var password = _passwordCtrl.text.trim();
           if (!email.toLowerCase().endsWith('@student.tce.edu')) {
             setState(() {
@@ -64,7 +64,7 @@ class _RegisterState extends State<Register> {
             });
           } else if (name != "" &&
               email != "" &&
-              phoneno != "" &&
+              regno != "" &&
               password != "") {
             try {
               FirebaseAuth.instance
@@ -80,7 +80,7 @@ class _RegisterState extends State<Register> {
                           "UserID": currentUser?.uid,
                           "Email": email,
                           "Name": name,
-                          "Phone Number": phoneno,
+                          "Register number": regno,
                           "Role": "Student",
                         }),
                         // .then((value) => {
@@ -116,7 +116,7 @@ class _RegisterState extends State<Register> {
           children: [
             _entryField('Name', _nameCtrl),
             _entryField('Email', _emailCtrl),
-            _entryField('Phone Number', _phonenoCtrl),
+            _entryField('Phone Number', _regNoCtrl),
             _entryField('Password', _passwordCtrl),
             _errorMessage(),
             _registerBtn(),

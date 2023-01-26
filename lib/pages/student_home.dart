@@ -1,7 +1,10 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nearby_connections/nearby_connections.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class StudentHomePage extends StatefulWidget {
   const StudentHomePage({super.key});
@@ -11,7 +14,8 @@ class StudentHomePage extends StatefulWidget {
 }
 
 class _StudentHomePageState extends State<StudentHomePage> {
-  final String userName = Random().nextInt(10000).toString();
+  User? user = FirebaseAuth.instance.currentUser;
+  late final String currEmail = user?.email.toString() ?? "null";
   final Strategy strategy = Strategy.P2P_STAR;
   Map<String, ConnectionInfo> endpointMap = Map();
 
@@ -44,49 +48,94 @@ class _StudentHomePageState extends State<StudentHomePage> {
 
               try {
                 bool a = await Nearby().startDiscovery(
-                  userName,
+                  currEmail,
                   strategy,
                   onEndpointFound: (id, name, serviceId) {
-                    // show sheet automatically to request connection
+                    try {
+                      FirebaseFirestore.instance
+                          .collection(DateTime(DateTime.now().year,
+                                  DateTime.now().month, DateTime.now().day)
+                              .toString()
+                              .replaceAll("00:00:00.000", ""))
+                          .doc('Maths')
+                          .update({
+                        //append currmail to email key
+                        'email': FieldValue.arrayUnion([currEmail])
+                      });
 
-                    showModalBottomSheet(
-                      context: context,
-                      builder: (builder) {
-                        return Center(
-                          child: Column(
-                            children: <Widget>[
-                              Text("id: " + id),
-                              Text("Name: " + name),
-                              Text("ServiceId: " + serviceId),
-                              ElevatedButton(
-                                child: Text("Request Connection"),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  Nearby().requestConnection(
-                                    userName,
-                                    id,
-                                    onConnectionInitiated: (id, info) {
-                                      onConnectionInit(id, info);
-                                    },
-                                    onConnectionResult: (id, status) {
-                                      showSnackbar(status);
-                                    },
-                                    onDisconnected: (id) {
-                                      setState(() {
-                                        endpointMap.remove(id);
-                                      });
-                                      showSnackbar(
-                                          "Disconnected from: ${endpointMap[id]!.endpointName}, id $id");
-                                    },
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    );
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text("Attendance recorded!! :)")));
+                    } on FirebaseAuthException catch (e) {
+                      print("Error $e");
+                    }
                   },
+                  //         try {
+                  //   // FirebaseAuth.instance
+                  //       // .createUserWithEmailAndPassword(
+                  //       //     email: email, password: password)
+                  //       // .then((value) => {
+                  //       //       log("User created to FireAuth"),
+                  //             FirebaseFirestore.instance
+                  //                 .collection(DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day).toString().replaceAll("00:00:00.000", ""))
+                  //                 .doc('Maths')
+                  //                 .set({
+                  //                   //append currmail to email key
+                  //                   'email': FieldValue.arrayUnion([currEmail]),
+
+                  //               }),
+                  //             // .then((value) => {
+                  //             //           FirebaseAuth.instance.signOut(),
+                  //             //           Get.toNamed('/login'),
+                  //             //         }),
+                  //             // log("Data added to Firestore")
+                  //           );
+                  // } on FirebaseAuthException catch (e) {
+                  //   print("Error $e");
+                  //   setState(() {
+                  //     errorMsg = e.message;
+                  //   });
+                  // }
+                  //       })
+                  //         // show sheet automatically to request connection
+                  //         // Firebase
+                  //       //   showModalBottomSheet(
+                  //       //     context: context,
+                  //       //     builder: (builder) {
+                  //       //       return Center(
+                  //       //         child: Column(
+                  //       //           children: <Widget>[
+                  //       //             Text("id: " + id),
+                  //       //             Text("Name: " + name),
+                  //       //             Text("ServiceId: " + serviceId),
+                  //       //             ElevatedButton(
+                  //       //               child: const Text("Request Connection"),
+                  //       //               onPressed: () {
+                  //       //                 Navigator.pop(context);
+                  //       //                 Nearby().requestConnection(
+                  //       //                   userName,
+                  //       //                   id,
+                  //       //                   onConnectionInitiated: (id, info) {
+                  //       //                     onConnectionInit(id, info);
+                  //       //                   },
+                  //       //                   onConnectionResult: (id, status) {
+                  //       //                     showSnackbar(status);
+                  //       //                   },
+                  //       //                   onDisconnected: (id) {
+                  //       //                     setState(() {
+                  //       //                       endpointMap.remove(id);
+                  //       //                     });
+                  //       //                     showSnackbar(
+                  //       //                         "Disconnected from: ${endpointMap[id]!.endpointName}, id $id");
+                  //       //                   },
+                  //       //                 );
+                  //       //               },
+                  //       //             ),
+                  //       //           ],
+                  //       //         ),
+                  //       //       );
+                  //       //     },
+                  //       //   );
+                  //       // },
                   onEndpointLost: (id) {
                     showSnackbar(
                         "Lost discovered Endpoint: ${endpointMap[id]!.endpointName}, id $id");
