@@ -62,24 +62,24 @@ class _StudentHomePageState extends State<StudentHomePage> {
                       },
                       onConnectionResult: (id, status) async {
                         showSnackbar(status);
-                        // try {
-                        //   FirebaseFirestore.instance
-                        //       .collection(DateTime(DateTime.now().year,
-                        //               DateTime.now().month, DateTime.now().day)
-                        //           .toString()
-                        //           .replaceAll("00:00:00.000", ""))
-                        //       .doc('Maths')
-                        //       .update({
-                        //     //append currmail to email key
-                        //     'email': FieldValue.arrayUnion([currEmail])
-                        //   });
-                        // } on FirebaseAuthException catch (e) {
-                        //   print("Error $e");
-                        // }
-                        // showSnackbar("Attendance taken!");
+                        try {
+                          FirebaseFirestore.instance
+                              .collection(DateTime(DateTime.now().year,
+                                      DateTime.now().month, DateTime.now().day)
+                                  .toString()
+                                  .replaceAll("00:00:00.000", ""))
+                              .doc('Maths')
+                              .update({
+                            //append currmail to email key
+                            'email': FieldValue.arrayUnion([currEmail])
+                          });
+                        } on FirebaseAuthException catch (e) {
+                          print("Error $e");
+                        }
+                        showSnackbar("Attendance taken!");
                         // await Nearby().stopAllEndpoints();
-                        //   setState(() {
-                        //     endpointMap.clear();
+                        // setState(() {
+                        //   endpointMap.clear();
                         // });
                       },
                       onDisconnected: (id) {
@@ -109,15 +109,15 @@ class _StudentHomePageState extends State<StudentHomePage> {
             },
           ),
           Text("Number of connected devices: ${endpointMap.length}"),
-          ElevatedButton(
-            child: Text("Stop All Endpoints"),
-            onPressed: () async {
-              await Nearby().stopAllEndpoints();
-              setState(() {
-                endpointMap.clear();
-              });
-            },
-          ),
+          // ElevatedButton(
+          //   child: Text("Stop All Endpoints"),
+          //   onPressed: () async {
+          //     await Nearby().stopAllEndpoints();
+          //     setState(() {
+          //       endpointMap.clear();
+          //     });
+          //   },
+          // ),
         ])));
   }
 
