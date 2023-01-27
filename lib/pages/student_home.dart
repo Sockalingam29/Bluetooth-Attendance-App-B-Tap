@@ -51,91 +51,46 @@ class _StudentHomePageState extends State<StudentHomePage> {
                   currEmail,
                   strategy,
                   onEndpointFound: (id, name, serviceId) {
-                    try {
-                      FirebaseFirestore.instance
-                          .collection(DateTime(DateTime.now().year,
-                                  DateTime.now().month, DateTime.now().day)
-                              .toString()
-                              .replaceAll("00:00:00.000", ""))
-                          .doc('Maths')
-                          .update({
-                        //append currmail to email key
-                        'email': FieldValue.arrayUnion([currEmail])
-                      });
-
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text("Attendance recorded!! :)")));
-                    } on FirebaseAuthException catch (e) {
-                      print("Error $e");
-                    }
+                    print(id);
+                    print(name);
+                    print(serviceId);
+                    Nearby().requestConnection(
+                      currEmail,
+                      id,
+                      onConnectionInitiated: (id, info) {
+                        onConnectionInit(id, info);
+                      },
+                      onConnectionResult: (id, status) async {
+                        showSnackbar(status);
+                        // try {
+                        //   FirebaseFirestore.instance
+                        //       .collection(DateTime(DateTime.now().year,
+                        //               DateTime.now().month, DateTime.now().day)
+                        //           .toString()
+                        //           .replaceAll("00:00:00.000", ""))
+                        //       .doc('Maths')
+                        //       .update({
+                        //     //append currmail to email key
+                        //     'email': FieldValue.arrayUnion([currEmail])
+                        //   });
+                        // } on FirebaseAuthException catch (e) {
+                        //   print("Error $e");
+                        // }
+                        // showSnackbar("Attendance taken!");
+                        // await Nearby().stopAllEndpoints();
+                        //   setState(() {
+                        //     endpointMap.clear();
+                        // });
+                      },
+                      onDisconnected: (id) {
+                        showSnackbar(
+                            "Disconnected: ${endpointMap[id]!.endpointName}, id $id");
+                        setState(() {
+                          endpointMap.remove(id);
+                        });
+                      },
+                    );
                   },
-                  //         try {
-                  //   // FirebaseAuth.instance
-                  //       // .createUserWithEmailAndPassword(
-                  //       //     email: email, password: password)
-                  //       // .then((value) => {
-                  //       //       log("User created to FireAuth"),
-                  //             FirebaseFirestore.instance
-                  //                 .collection(DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day).toString().replaceAll("00:00:00.000", ""))
-                  //                 .doc('Maths')
-                  //                 .set({
-                  //                   //append currmail to email key
-                  //                   'email': FieldValue.arrayUnion([currEmail]),
-
-                  //               }),
-                  //             // .then((value) => {
-                  //             //           FirebaseAuth.instance.signOut(),
-                  //             //           Get.toNamed('/login'),
-                  //             //         }),
-                  //             // log("Data added to Firestore")
-                  //           );
-                  // } on FirebaseAuthException catch (e) {
-                  //   print("Error $e");
-                  //   setState(() {
-                  //     errorMsg = e.message;
-                  //   });
-                  // }
-                  //       })
-                  //         // show sheet automatically to request connection
-                  //         // Firebase
-                  //       //   showModalBottomSheet(
-                  //       //     context: context,
-                  //       //     builder: (builder) {
-                  //       //       return Center(
-                  //       //         child: Column(
-                  //       //           children: <Widget>[
-                  //       //             Text("id: " + id),
-                  //       //             Text("Name: " + name),
-                  //       //             Text("ServiceId: " + serviceId),
-                  //       //             ElevatedButton(
-                  //       //               child: const Text("Request Connection"),
-                  //       //               onPressed: () {
-                  //       //                 Navigator.pop(context);
-                  //       //                 Nearby().requestConnection(
-                  //       //                   userName,
-                  //       //                   id,
-                  //       //                   onConnectionInitiated: (id, info) {
-                  //       //                     onConnectionInit(id, info);
-                  //       //                   },
-                  //       //                   onConnectionResult: (id, status) {
-                  //       //                     showSnackbar(status);
-                  //       //                   },
-                  //       //                   onDisconnected: (id) {
-                  //       //                     setState(() {
-                  //       //                       endpointMap.remove(id);
-                  //       //                     });
-                  //       //                     showSnackbar(
-                  //       //                         "Disconnected from: ${endpointMap[id]!.endpointName}, id $id");
-                  //       //                   },
-                  //       //                 );
-                  //       //               },
-                  //       //             ),
-                  //       //           ],
-                  //       //         ),
-                  //       //       );
-                  //       //     },
-                  //       //   );
-                  //       // },
                   onEndpointLost: (id) {
                     showSnackbar(
                         "Lost discovered Endpoint: ${endpointMap[id]!.endpointName}, id $id");
@@ -151,6 +106,16 @@ class _StudentHomePageState extends State<StudentHomePage> {
             child: const Text("Stop Discovery"),
             onPressed: () async {
               await Nearby().stopDiscovery();
+            },
+          ),
+          Text("Number of connected devices: ${endpointMap.length}"),
+          ElevatedButton(
+            child: Text("Stop All Endpoints"),
+            onPressed: () async {
+              await Nearby().stopAllEndpoints();
+              setState(() {
+                endpointMap.clear();
+              });
             },
           ),
         ])));
@@ -174,93 +139,45 @@ class _StudentHomePageState extends State<StudentHomePage> {
   /// Called upon Connection request (on both devices)
   /// Both need to accept connection to start sending/receiving
   void onConnectionInit(String id, ConnectionInfo info) {
-    showModalBottomSheet(
-      context: context,
-      builder: (builder) {
-        return Center(
-          child: Column(
-            children: <Widget>[
-              Text("id: $id"),
-              Text("Token: ${info.authenticationToken}"),
-              Text("Name: ${info.endpointName}"),
-              Text("Incoming: " + info.isIncomingConnection.toString()),
-              ElevatedButton(
-                child: Text("Accept Connection"),
-                onPressed: () {
-                  Navigator.pop(context);
-                  setState(() {
-                    endpointMap[id] = info;
-                  });
-                  Nearby().acceptConnection(
-                    id,
-                    onPayLoadRecieved: (endid, payload) async {
-                      //   if (payload.type == PayloadType.BYTES) {
-                      //     String str = String.fromCharCodes(payload.bytes!);
-                      //     showSnackbar(endid + ": " + str);
-
-                      //     if (str.contains(':')) {
-                      //       // used for file payload as file payload is mapped as
-                      //       // payloadId:filename
-                      //       int payloadId = int.parse(str.split(':')[0]);
-                      //       String fileName = (str.split(':')[1]);
-
-                      //       if (map.containsKey(payloadId)) {
-                      //         if (tempFileUri != null) {
-                      //           moveFile(tempFileUri!, fileName);
-                      //         } else {
-                      //           showSnackbar("File doesn't exist");
-                      //         }
-                      //       } else {
-                      //         //add to map if not already
-                      //         map[payloadId] = fileName;
-                      //       }
-                      //     }
-                      //   } else if (payload.type == PayloadType.FILE) {
-                      //     showSnackbar(endid + ": File transfer started");
-                      //     tempFileUri = payload.uri;
-                      //   }
-                    },
-                    onPayloadTransferUpdate: (endid, payloadTransferUpdate) {
-                      // if (payloadTransferUpdate.status ==
-                      //     PayloadStatus.IN_PROGRESS) {
-                      //   print(payloadTransferUpdate.bytesTransferred);
-                      // } else if (payloadTransferUpdate.status ==
-                      //     PayloadStatus.FAILURE) {
-                      //   print("failed");
-                      //   showSnackbar(endid + ": FAILED to transfer file");
-                      // } else if (payloadTransferUpdate.status ==
-                      //     PayloadStatus.SUCCESS) {
-                      //   showSnackbar(
-                      //       "$endid success, total bytes = ${payloadTransferUpdate.totalBytes}");
-
-                      //   if (map.containsKey(payloadTransferUpdate.id)) {
-                      //     //rename the file now
-                      //     String name = map[payloadTransferUpdate.id]!;
-                      //     moveFile(tempFileUri!, name);
-                      //   } else {
-                      //     //bytes not received till yet
-                      //     map[payloadTransferUpdate.id] = "";
-                      //   }
-                      // }
-                    },
-                  );
-                },
-              ),
-              ElevatedButton(
-                child: Text("Reject Connection"),
-                onPressed: () async {
-                  Navigator.pop(context);
-                  try {
-                    await Nearby().rejectConnection(id);
-                  } catch (e) {
-                    showSnackbar(e);
-                  }
-                },
-              ),
-            ],
-          ),
-        );
-      },
+    print("id: $id");
+    print("Token: ${info.authenticationToken}");
+    print("Name: ${info.endpointName}");
+    setState(() {
+      endpointMap[id] = info;
+    });
+    Nearby().acceptConnection(
+      id,
+      onPayLoadRecieved: (endid, payload) {},
+      onPayloadTransferUpdate: (endid, payloadTransferUpdate) {},
     );
+    // showModalBottomSheet(
+    //   context: context,
+    //   builder: (builder) {
+    //     return Center(
+    //       child: Column(
+    //         children: <Widget>[
+    //           Text("id: $id"),
+    //           Text("Token: ${info.authenticationToken}"),
+    //           Text("Name: ${info.endpointName}"),
+    //           Text("Incoming: " + info.isIncomingConnection.toString()),
+    //           ElevatedButton(
+    //             child: Text("Accept Connection"),
+    //             onPressed: () {
+    //               Navigator.pop(context);
+    //               setState(() {
+    //                 endpointMap[id] = info;
+    //               });
+    //               Nearby().acceptConnection(
+    //                 id,
+    //                 onPayLoadRecieved: (endid, payload) async {},
+    //                 onPayloadTransferUpdate: (endid, payloadTransferUpdate) {},
+    //               );
+    //             },
+    //           ),
+    //         ],
+    //       ),
+    //     );
+    //   },
+    // );
   }
 }
