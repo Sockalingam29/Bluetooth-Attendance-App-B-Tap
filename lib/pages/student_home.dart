@@ -50,23 +50,39 @@ class _StudentHomePageState extends State<StudentHomePage> {
                 bool a = await Nearby().startDiscovery(
                   currEmail,
                   strategy,
-                  onEndpointFound: (id, name, serviceId) {
-                    try {
-                      FirebaseFirestore.instance
-                          .collection(DateTime(DateTime.now().year,
-                                  DateTime.now().month, DateTime.now().day)
-                              .toString()
-                              .replaceAll("00:00:00.000", ""))
-                          .doc('Maths')
-                          .update({
-                        //append currmail to email key
-                        'email': FieldValue.arrayUnion([currEmail])
-                      });
+                  onEndpointFound: (id, name, serviceId) async {
+                    print("endpoint found");
+                    print(name);
+                    print("Found endpoint: $id, $name, $serviceId");
+                    if (name == "TCE_Faculty") {
+                      try {
+                        // add if not exists, else update
+                        var db = FirebaseFirestore.instance
+                            .collection(DateTime(DateTime.now().year,
+                                    DateTime.now().month, DateTime.now().day)
+                                .toString()
+                                .replaceAll("00:00:00.000", ""))
+                            .doc('Maths');
+                        var data = await db.get();
 
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text("Attendance recorded!! :)")));
-                    } on FirebaseAuthException catch (e) {
-                      print("Error $e");
+                        if (!data.exists) {
+                          db.set({
+                            //append currmail to email key
+                            'email': FieldValue.arrayUnion([currEmail]),
+                          });
+                        } else {
+                          db.update({
+                            //append currmail to email key
+                            'email': FieldValue.arrayUnion([currEmail]),
+                          });
+                        }
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text("Attendance recorded!! :)")));
+                      } on FirebaseAuthException catch (e) {
+                        print("Error $e");
+                      }
                     }
                   },
                   //         try {

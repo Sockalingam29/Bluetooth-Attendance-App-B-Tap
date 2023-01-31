@@ -27,7 +27,7 @@ class _StaffHomePage extends State<StaffHomePage> {
 
   TextEditingController dateController = TextEditingController();
 
-  final String userName = Random().nextInt(10000).toString();
+  final String userName = "TCE_Faculty";
   final Strategy strategy = Strategy.P2P_STAR; //1 to N
   Map<String, ConnectionInfo> endpointMap = Map(); //connection details
 
