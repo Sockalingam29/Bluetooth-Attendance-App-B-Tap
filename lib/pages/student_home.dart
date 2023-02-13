@@ -95,73 +95,6 @@ class _StudentHomePageState extends State<StudentHomePage> {
                       }
                     }
                   },
-                  //         try {
-                  //   // FirebaseAuth.instance
-                  //       // .createUserWithEmailAndPassword(
-                  //       //     email: email, password: password)
-                  //       // .then((value) => {
-                  //       //       log("User created to FireAuth"),
-                  //             FirebaseFirestore.instance
-                  //                 .collection(DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day).toString().replaceAll("00:00:00.000", ""))
-                  //                 .doc('Maths')
-                  //                 .set({
-                  //                   //append currmail to email key
-                  //                   'email': FieldValue.arrayUnion([currEmail]),
-
-                  //               }),
-                  //             // .then((value) => {
-                  //             //           FirebaseAuth.instance.signOut(),
-                  //             //           Get.toNamed('/login'),
-                  //             //         }),
-                  //             // log("Data added to Firestore")
-                  //           );
-                  // } on FirebaseAuthException catch (e) {
-                  //   print("Error $e");
-                  //   setState(() {
-                  //     errorMsg = e.message;
-                  //   });
-                  // }
-                  //       })
-                  //         // show sheet automatically to request connection
-                  //         // Firebase
-                  //       //   showModalBottomSheet(
-                  //       //     context: context,
-                  //       //     builder: (builder) {
-                  //       //       return Center(
-                  //       //         child: Column(
-                  //       //           children: <Widget>[
-                  //       //             Text("id: " + id),
-                  //       //             Text("Name: " + name),
-                  //       //             Text("ServiceId: " + serviceId),
-                  //       //             ElevatedButton(
-                  //       //               child: const Text("Request Connection"),
-                  //       //               onPressed: () {
-                  //       //                 Navigator.pop(context);
-                  //       //                 Nearby().requestConnection(
-                  //       //                   userName,
-                  //       //                   id,
-                  //       //                   onConnectionInitiated: (id, info) {
-                  //       //                     onConnectionInit(id, info);
-                  //       //                   },
-                  //       //                   onConnectionResult: (id, status) {
-                  //       //                     showSnackbar(status);
-                  //       //                   },
-                  //       //                   onDisconnected: (id) {
-                  //       //                     setState(() {
-                  //       //                       endpointMap.remove(id);
-                  //       //                     });
-                  //       //                     showSnackbar(
-                  //       //                         "Disconnected from: ${endpointMap[id]!.endpointName}, id $id");
-                  //       //                   },
-                  //       //                 );
-                  //       //               },
-                  //       //             ),
-                  //       //           ],
-                  //       //         ),
-                  //       //       );
-                  //       //     },
-                  //       //   );
-                  //       // },
                   onEndpointLost: (id) {
                     showSnackbar(
                         "Lost discovered Endpoint: ${endpointMap[id]!.endpointName}, id $id");
@@ -188,17 +121,6 @@ class _StudentHomePageState extends State<StudentHomePage> {
     ));
   }
 
-  // Future<bool> moveFile(String uri, String fileName) async {
-  // String parentDir = (await getExternalStorageDirectory())!.absolute.path;
-  // final b =
-  //     await Nearby().copyFileAndDeleteOriginal(uri, '$parentDir/$fileName');
-
-  // showSnackbar("Moved file:" + b.toString());
-  // return b;
-  // }
-
-  /// Called upon Connection request (on both devices)
-  /// Both need to accept connection to start sending/receiving
   void onConnectionInit(String id, ConnectionInfo info) {
     showModalBottomSheet(
       context: context,
@@ -219,56 +141,8 @@ class _StudentHomePageState extends State<StudentHomePage> {
                   });
                   Nearby().acceptConnection(
                     id,
-                    onPayLoadRecieved: (endid, payload) async {
-                      //   if (payload.type == PayloadType.BYTES) {
-                      //     String str = String.fromCharCodes(payload.bytes!);
-                      //     showSnackbar(endid + ": " + str);
-
-                      //     if (str.contains(':')) {
-                      //       // used for file payload as file payload is mapped as
-                      //       // payloadId:filename
-                      //       int payloadId = int.parse(str.split(':')[0]);
-                      //       String fileName = (str.split(':')[1]);
-
-                      //       if (map.containsKey(payloadId)) {
-                      //         if (tempFileUri != null) {
-                      //           moveFile(tempFileUri!, fileName);
-                      //         } else {
-                      //           showSnackbar("File doesn't exist");
-                      //         }
-                      //       } else {
-                      //         //add to map if not already
-                      //         map[payloadId] = fileName;
-                      //       }
-                      //     }
-                      //   } else if (payload.type == PayloadType.FILE) {
-                      //     showSnackbar(endid + ": File transfer started");
-                      //     tempFileUri = payload.uri;
-                      //   }
-                    },
-                    onPayloadTransferUpdate: (endid, payloadTransferUpdate) {
-                      // if (payloadTransferUpdate.status ==
-                      //     PayloadStatus.IN_PROGRESS) {
-                      //   print(payloadTransferUpdate.bytesTransferred);
-                      // } else if (payloadTransferUpdate.status ==
-                      //     PayloadStatus.FAILURE) {
-                      //   print("failed");
-                      //   showSnackbar(endid + ": FAILED to transfer file");
-                      // } else if (payloadTransferUpdate.status ==
-                      //     PayloadStatus.SUCCESS) {
-                      //   showSnackbar(
-                      //       "$endid success, total bytes = ${payloadTransferUpdate.totalBytes}");
-
-                      //   if (map.containsKey(payloadTransferUpdate.id)) {
-                      //     //rename the file now
-                      //     String name = map[payloadTransferUpdate.id]!;
-                      //     moveFile(tempFileUri!, name);
-                      //   } else {
-                      //     //bytes not received till yet
-                      //     map[payloadTransferUpdate.id] = "";
-                      //   }
-                      // }
-                    },
+                    onPayLoadRecieved: (endid, payload) async {},
+                    onPayloadTransferUpdate: (endid, payloadTransferUpdate) {},
                   );
                 },
               ),
