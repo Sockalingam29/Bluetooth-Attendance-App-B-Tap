@@ -113,8 +113,9 @@ class _StaffHomePage extends State<StaffHomePage> {
         actions: [
           GestureDetector(
               child: const Icon(Icons.logout_sharp),
-              onTap: () {
-                FirebaseAuth.instance.signOut();
+              onTap: () async {
+                await Nearby().stopAdvertising();
+                await FirebaseAuth.instance.signOut();
                 Get.toNamed('/login');
               }),
         ],

@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nearby_connections/nearby_connections.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
 
 class StudentHomePage extends StatefulWidget {
   const StudentHomePage({super.key});
@@ -24,6 +25,15 @@ class _StudentHomePageState extends State<StudentHomePage> {
     return Scaffold(
         appBar: AppBar(
           title: const Text("Student HomePage"),
+          actions: [
+            GestureDetector(
+                child: const Icon(Icons.logout_sharp),
+                onTap: () async {
+                  await Nearby().stopDiscovery();
+                  await FirebaseAuth.instance.signOut();
+                  Get.toNamed('/login');
+                }),
+          ],
         ),
         body: Center(
             child: Column(children: [
