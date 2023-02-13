@@ -21,6 +21,8 @@ class StaffHomePage extends StatefulWidget {
 }
 
 class _StaffHomePage extends State<StaffHomePage> {
+  bool _showOverlay = true;
+
   // Initial Selected Value
   String dropdownvalue1 = "Semester 1";
   String dropdownvalue2 = "Subject 1";
@@ -201,7 +203,7 @@ class _StaffHomePage extends State<StaffHomePage> {
               ),
               _takeAttendance(),
               ElevatedButton(
-                child: Text("Stop Advertising"),
+                child: const Text("Stop Advertising"),
                 onPressed: () async {
                   await Nearby().stopAdvertising();
                 },
@@ -217,6 +219,26 @@ class _StaffHomePage extends State<StaffHomePage> {
                     }));
                   },
                   child: const Text("Student List")),
+              _showOverlay
+                  ? Positioned(
+                      top: 0,
+                      left: 100,
+                      right: 100,
+                      bottom: 100,
+                      child: Container(
+                        color: Colors.blue.withOpacity(0.5),
+                        child: const Center(
+                          child: Text(
+                            'Overlay Content',
+                            style: TextStyle(
+                              fontSize: 24,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  : Container(),
             ],
           ),
         ),
