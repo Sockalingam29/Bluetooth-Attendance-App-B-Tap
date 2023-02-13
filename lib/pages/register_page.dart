@@ -89,6 +89,7 @@ class _RegisterState extends State<Register> {
                         //         }),
                         log("Data added to Firestore")
                       });
+              Get.toNamed('/login');
             } on FirebaseAuthException catch (e) {
               print("Error $e");
               setState(() {
