@@ -197,7 +197,19 @@ class _StaffHomePage extends State<StaffHomePage> {
                   onPressed: () {
                     // print("$semesterChoosen $subjectChoosen ${dateController.text}");
 
-                    Get.toNamed('/studentList');
+                    if (semesterChoosen == "Select a Option" ||
+                        subjectChoosen == "Select a Option" ||
+                        dateController.text == "") {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text("Please Select All Fields")));
+                      return;
+                    }
+
+                    Get.toNamed('/studentList', arguments: {
+                      "semester": semesterChoosen,
+                      "subject": subjectChoosen,
+                      "date": dateController.text
+                    });
                   },
                   child: const Text("Student List")),
             ],
