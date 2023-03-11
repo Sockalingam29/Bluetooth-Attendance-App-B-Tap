@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, unnecessary_new
+// ignore_for_file: use_build_context_synchronously, unnecessary_new, avoid_print
 
 // import 'dart:math';
 // import 'package:att_blue/pages/student_list.dart';
@@ -19,7 +19,6 @@ class StaffHomePage extends StatefulWidget {
 }
 
 class _StaffHomePage extends State<StaffHomePage> {
-  // Initial Selected Value
   String semesterChoosen = "Select a Option";
   String subjectChoosen = "Select a Option";
   TextEditingController dateController = TextEditingController();
@@ -196,11 +195,7 @@ class _StaffHomePage extends State<StaffHomePage> {
               ),
               ElevatedButton(
                   onPressed: () {
-                    print(semesterChoosen +
-                        " " +
-                        subjectChoosen +
-                        " " +
-                        dateController.text);
+                    print("$semesterChoosen $subjectChoosen ${dateController.text}");
 
                     // Get.toNamed('/staffHome');
                   },
