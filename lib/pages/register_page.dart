@@ -77,26 +77,27 @@ class _RegisterState extends State<Register> {
               });
             } else {
               try {
-                await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                    email: email, password: password);
-                await ((value) => {
-                      setState(() {
-                        errorMsg = "Created";
-                      }),
-                      print("User created to FireAuth"),
-                      FirebaseFirestore.instance
-                          .collection("Users")
-                          .doc(currentUser?.uid)
-                          .set({
-                        "createdAt": DateTime.now(),
-                        "UserID": currentUser?.uid,
-                        "Email": email,
-                        "Name": name,
-                        "Register number": regno,
-                        "Role": "Student",
-                      }),
-                      print("Data added to Firestore")
-                    });
+                await FirebaseAuth.instance
+                    .createUserWithEmailAndPassword(
+                        email: email, password: password)
+                    .then((value) => {
+                          setState(() {
+                            errorMsg = "Created";
+                          }),
+                          print("User created to FireAuth"),
+                          FirebaseFirestore.instance
+                              .collection("Users")
+                              .doc(currentUser?.uid)
+                              .set({
+                            "createdAt": DateTime.now(),
+                            "UserID": currentUser?.uid,
+                            "Email": email,
+                            "Name": name,
+                            "Register number": regno,
+                            "Role": "Student",
+                          }),
+                          print("Data added to Firestore")
+                        });
               } on FirebaseAuthException catch (e) {
                 print(e.code);
                 // print("Error : $e");
@@ -134,7 +135,7 @@ class _RegisterState extends State<Register> {
               ),
               _entryField('Name', _nameCtrl),
               _entryField('Email', _emailCtrl),
-              _entryField('Phone Number', _regNoCtrl),
+              _entryField('Register Number', _regNoCtrl),
               _entryField('Password', _passwordCtrl),
               _errorMessage(),
               _registerBtn(),
