@@ -1,15 +1,13 @@
 // ignore_for_file: use_build_context_synchronously, unnecessary_new
 
-import 'dart:math';
-
+// import 'dart:math';
 // import 'package:att_blue/pages/student_list.dart';
-import 'package:att_blue/models/sub.dart';
+// import 'package:att_blue/models/sub.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:nearby_connections/nearby_connections.dart';
-
 import 'list.dart';
 
 class StaffHomePage extends StatefulWidget {
@@ -22,9 +20,8 @@ class StaffHomePage extends StatefulWidget {
 
 class _StaffHomePage extends State<StaffHomePage> {
   // Initial Selected Value
-  String dropdownvalue1 = "Semester 1";
-  String dropdownvalue2 = "Subject 1";
-
+  String semesterChoosen = "Select a Option";
+  String subjectChoosen = "Select a Option";
   TextEditingController dateController = TextEditingController();
 
   final String userName = "TCE_Faculty";
@@ -42,20 +39,20 @@ class _StaffHomePage extends State<StaffHomePage> {
   }
 
   // List of items in our dropdown menu
-  var sem = [
+  var semester = [
+    "Select a Option",
     "Semester 1",
     "Semester 2",
     "Semester 3",
     "Semester 4",
-    "Semester 5",
   ];
 
-  var sub = [
+  var subject = [
+    "Select a Option",
     "Subject 1",
     "Subject 2",
     "Subject 3",
     "Subject 4",
-    "Subject 5",
   ];
 
   Widget _takeAttendance() {
@@ -94,7 +91,7 @@ class _StaffHomePage extends State<StaffHomePage> {
                 });
               },
             );
-            showSnackbar("ADVERTISING: " + a.toString());
+            showSnackbar("ADVERTISING: $a");
           } catch (exception) {
             showSnackbar(exception);
           }
@@ -105,6 +102,7 @@ class _StaffHomePage extends State<StaffHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text("TCE Faculty"),
         actions: [
           GestureDetector(
@@ -125,47 +123,35 @@ class _StaffHomePage extends State<StaffHomePage> {
             children: [
               const Text("Choose Semester"),
               DropdownButton(
-                // Initial Value
-                value: dropdownvalue1,
-
-                // Down Arrow Icon
+                
+                value: semesterChoosen,
                 icon: const Icon(Icons.keyboard_arrow_down),
-
-                // Array list of items
-                items: sem.map((String items) {
+                items: semester.map((String items) {
                   return DropdownMenuItem(
                     value: items,
                     child: Text(items),
                   );
                 }).toList(),
-                // After selecting the desired option,it will
-                // change button value to selected value
                 onChanged: (String? newValue) {
                   setState(() {
-                    dropdownvalue1 = newValue!;
+                    semesterChoosen = newValue!;
                   });
                 },
               ),
               const Text('Choose Subject'),
               DropdownButton(
-                // Initial Value
-                value: dropdownvalue2,
-
-                // Down Arrow Icon
-                icon: const Icon(Icons.keyboard_arrow_down),
-
-                // Array list of items
-                items: sub.map((String items) {
+                value: subjectChoosen, // Initial Value
+                icon: const Icon(Icons.keyboard_arrow_down),  // Down Arrow Icon
+                items: subject.map((String items) {
                   return DropdownMenuItem(
                     value: items,
                     child: Text(items),
                   );
                 }).toList(),
-                // After selecting the desired option,it will
-                // change button value to selected value
+                // After selecting the desired option,it will change button value to selected value
                 onChanged: (String? newValue) {
                   setState(() {
-                    dropdownvalue2 = newValue!;
+                    subjectChoosen = newValue!;
                   });
                 },
               ),

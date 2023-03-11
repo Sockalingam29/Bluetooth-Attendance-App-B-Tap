@@ -1,10 +1,11 @@
-import 'package:att_blue/pages/home_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../auth.dart';
+import 'package:att_blue/pages/home_page.dart';
+import 'package:att_blue/pages/staff_home.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -78,10 +79,8 @@ class _LoginState extends State<Login> {
                     if (email.toLowerCase().endsWith('@student.tce.edu')) {
                       Get.toNamed('/studentHome');
                     } else {
-                      Get.toNamed('/staffHome');
+                      Get.to(const StaffHomePage());
                     }
-                    // ignore: use_build_context_synchronously
-                    // Navigator.pushNamed(context, '/home');
                   }
                 } on FirebaseAuthException catch (e) {
                   setState(() {

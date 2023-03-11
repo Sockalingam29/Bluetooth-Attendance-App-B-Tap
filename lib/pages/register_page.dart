@@ -2,13 +2,13 @@
 
 import 'dart:developer';
 
-import 'package:att_blue/pages/home_page.dart';
-import 'package:att_blue/pages/login_register_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../auth.dart';
+import 'package:att_blue/pages/home_page.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -70,39 +70,36 @@ class _RegisterState extends State<Register> {
             var email = _emailCtrl.text.trim();
             var regno = _regNoCtrl.text.trim();
             var password = _passwordCtrl.text.trim();
+
             if (!email.toLowerCase().endsWith('@student.tce.edu')) {
               setState(() {
                 errorMsg = 'Not a valid Email';
               });
             } else {
               try {
-                FirebaseAuth.instance
-                    .createUserWithEmailAndPassword(
-                        email: email, password: password)
-                    .then((value) => {
-                          setState(() {
-                            errorMsg = "Created";
-                          }),
-                          log("User created to FireAuth"),
-                          FirebaseFirestore.instance
-                              .collection("Users")
-                              .doc(currentUser?.uid)
-                              .set({
-                            "createdAt": DateTime.now(),
-                            "UserID": currentUser?.uid,
-                            "Email": email,
-                            "Name": name,
-                            "Register number": regno,
-                            "Role": "Student",
-                          }),
-                          // .then((value) => {
-                          //           FirebaseAuth.instance.signOut(),
-                          //           Get.toNamed('/login'),
-                          //         }),
-                          log("Data added to Firestore")
-                        });
+                await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                    email: email, password: password);
+                await ((value) => {
+                      setState(() {
+                        errorMsg = "Created";
+                      }),
+                      print("User created to FireAuth"),
+                      FirebaseFirestore.instance
+                          .collection("Users")
+                          .doc(currentUser?.uid)
+                          .set({
+                        "createdAt": DateTime.now(),
+                        "UserID": currentUser?.uid,
+                        "Email": email,
+                        "Name": name,
+                        "Register number": regno,
+                        "Role": "Student",
+                      }),
+                      print("Data added to Firestore")
+                    });
               } on FirebaseAuthException catch (e) {
-                print("Error $e");
+                print(e.code);
+                // print("Error : $e");
                 setState(() {
                   errorMsg = e.message;
                 });
