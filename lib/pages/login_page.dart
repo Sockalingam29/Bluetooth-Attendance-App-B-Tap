@@ -79,7 +79,7 @@ class _LoginState extends State<Login> {
                     if (email.toLowerCase().endsWith('@student.tce.edu')) {
                       Get.toNamed('/studentHome');
                     } else {
-                      Get.to(const StaffHomePage());
+                      Get.toNamed('/staffHome');
                     }
                   }
                 } on FirebaseAuthException catch (e) {

@@ -24,7 +24,7 @@ class _StaffHomePage extends State<StaffHomePage> {
   String subjectChoosen = "Select a Option";
   TextEditingController dateController = TextEditingController();
 
-  final String userName = "TCE_Faculty";
+  String userName = "";
   final Strategy strategy = Strategy.P2P_STAR; //1 to N
   Map<String, ConnectionInfo> endpointMap = Map(); //connection details
 
@@ -75,25 +75,32 @@ class _StaffHomePage extends State<StaffHomePage> {
             //     content: Text("Bluetooth permissions not granted :(")));
           }
 
-          try {
-            bool a = await Nearby().startAdvertising(
-              userName,
-              strategy,
-              onConnectionInitiated: onConnectionInit,
-              onConnectionResult: (id, status) {
-                showSnackbar(status);
-              },
-              onDisconnected: (id) {
-                showSnackbar(
-                    "Disconnected: ${endpointMap[id]!.endpointName}, id $id");
-                setState(() {
-                  endpointMap.remove(id);
-                });
-              },
-            );
-            showSnackbar("ADVERTISING: $a");
-          } catch (exception) {
-            showSnackbar(exception);
+          if (semesterChoosen != "Select a Option" &&
+              subjectChoosen != "Select a Option") {
+            try {
+              userName = "TCE_Faculty $semesterChoosen $subjectChoosen";
+              bool a = await Nearby().startAdvertising(
+                userName,
+                strategy,
+                onConnectionInitiated: onConnectionInit,
+                onConnectionResult: (id, status) {
+                  showSnackbar(status);
+                },
+                onDisconnected: (id) {
+                  showSnackbar(
+                      "Disconnected: ${endpointMap[id]!.endpointName}, id $id");
+                  setState(() {
+                    endpointMap.remove(id);
+                  });
+                },
+              );
+              showSnackbar("ADVERTISING: $a");
+            } catch (exception) {
+              showSnackbar(exception);
+            }
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Please Select All Fields")));
           }
         });
   }
@@ -123,7 +130,6 @@ class _StaffHomePage extends State<StaffHomePage> {
             children: [
               const Text("Choose Semester"),
               DropdownButton(
-                
                 value: semesterChoosen,
                 icon: const Icon(Icons.keyboard_arrow_down),
                 items: semester.map((String items) {
@@ -141,7 +147,7 @@ class _StaffHomePage extends State<StaffHomePage> {
               const Text('Choose Subject'),
               DropdownButton(
                 value: subjectChoosen, // Initial Value
-                icon: const Icon(Icons.keyboard_arrow_down),  // Down Arrow Icon
+                icon: const Icon(Icons.keyboard_arrow_down), // Down Arrow Icon
                 items: subject.map((String items) {
                   return DropdownMenuItem(
                     value: items,
@@ -190,13 +196,13 @@ class _StaffHomePage extends State<StaffHomePage> {
               ),
               ElevatedButton(
                   onPressed: () {
-                    // Subdetails SD = Subdetails();
-                    // SD.subname = dropdownvalue2;
+                    print(semesterChoosen +
+                        " " +
+                        subjectChoosen +
+                        " " +
+                        dateController.text);
 
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                      return ItemList();
-                    }));
+                    // Get.toNamed('/staffHome');
                   },
                   child: const Text("Student List")),
             ],

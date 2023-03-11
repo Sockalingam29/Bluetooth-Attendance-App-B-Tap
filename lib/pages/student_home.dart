@@ -62,6 +62,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
                   strategy,
                   onEndpointFound: (id, name, serviceId) async {
                     print("endpoint found");
+                    // ignore: avoid_print
                     print(name);
                     print("Found endpoint: $id, $name, $serviceId");
                     if (name == "TCE_Faculty") {
