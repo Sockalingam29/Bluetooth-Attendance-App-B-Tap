@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, use_build_context_synchronously
+
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,6 +19,7 @@ class StudentHomePage extends StatefulWidget {
 class _StudentHomePageState extends State<StudentHomePage> {
   User? user = FirebaseAuth.instance.currentUser;
   late final String currEmail = user?.email.toString() ?? "null";
+
   final Strategy strategy = Strategy.P2P_STAR;
   Map<String, ConnectionInfo> endpointMap = Map();
 
@@ -62,10 +65,9 @@ class _StudentHomePageState extends State<StudentHomePage> {
                   strategy,
                   onEndpointFound: (id, name, serviceId) async {
                     print("endpoint found");
-                    // ignore: avoid_print
                     print(name);
                     print("Found endpoint: $id, $name, $serviceId");
-                    if (name == "TCE_Faculty") {
+                    if (name.startsWith("TCE_Faculty")) {
                       try {
                         // add if not exists, else update
                         var db = FirebaseFirestore.instance
@@ -73,7 +75,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
                                     DateTime.now().month, DateTime.now().day)
                                 .toString()
                                 .replaceAll("00:00:00.000", ""))
-                            .doc('Maths');
+                            .doc(name.replaceAll("TCE_Faculty ", ""));
                         var data = await db.get();
 
                         if (!data.exists) {
