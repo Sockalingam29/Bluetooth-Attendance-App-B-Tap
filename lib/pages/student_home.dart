@@ -103,7 +103,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
                         "Lost discovered Endpoint: ${endpointMap[id]!.endpointName}, id $id");
                   },
                 );
-                showSnackbar("DISCOVERING: " + a.toString());
+                showSnackbar("DISCOVERING: $a");
               } catch (e) {
                 showSnackbar(e);
               }
@@ -134,9 +134,9 @@ class _StudentHomePageState extends State<StudentHomePage> {
               Text("id: $id"),
               Text("Token: ${info.authenticationToken}"),
               Text("Name: ${info.endpointName}"),
-              Text("Incoming: " + info.isIncomingConnection.toString()),
+              Text("Incoming: ${info.isIncomingConnection}"),
               ElevatedButton(
-                child: Text("Accept Connection"),
+                child: const Text("Accept Connection"),
                 onPressed: () {
                   Navigator.pop(context);
                   setState(() {
@@ -150,7 +150,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
                 },
               ),
               ElevatedButton(
-                child: Text("Reject Connection"),
+                child: const Text("Reject Connection"),
                 onPressed: () async {
                   Navigator.pop(context);
                   try {

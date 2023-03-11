@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:nearby_connections/nearby_connections.dart';
-import 'list.dart';
+import 'student_list.dart';
 
 class StaffHomePage extends StatefulWidget {
   const StaffHomePage({Key? key}) : super(key: key);
@@ -195,9 +195,9 @@ class _StaffHomePage extends State<StaffHomePage> {
               ),
               ElevatedButton(
                   onPressed: () {
-                    print("$semesterChoosen $subjectChoosen ${dateController.text}");
+                    // print("$semesterChoosen $subjectChoosen ${dateController.text}");
 
-                    // Get.toNamed('/staffHome');
+                    Get.toNamed('/studentList');
                   },
                   child: const Text("Student List")),
             ],

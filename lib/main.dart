@@ -1,5 +1,5 @@
 import 'package:att_blue/pages/home_page.dart';
-import 'package:att_blue/pages/list.dart';
+import 'package:att_blue/pages/student_list.dart';
 import 'package:att_blue/pages/login_page.dart';
 import 'package:att_blue/pages/staff_home.dart';
 import 'package:att_blue/pages/student_home.dart';
@@ -51,7 +51,8 @@ class _MyAppState extends State<MyApp> {
             user != null ? const StudentHomePage() : const Login(),
         '/staffHome': (context) =>
             user != null ? const StaffHomePage() : const Login(),
-        '/studentList': (context) => user != null ? ItemList() : const Login(),
+        '/studentList': (context) =>
+            user != null ? const StudentList() : const Login(),
       },
     );
   }
