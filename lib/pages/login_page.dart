@@ -77,9 +77,9 @@ class _LoginState extends State<Login> {
 
                   if (firebaseUser != null) {
                     if (email.toLowerCase().endsWith('@student.tce.edu')) {
-                      Get.toNamed('/studentHome');
+                      Get.offNamed('/studentHome');
                     } else {
-                      Get.toNamed('/staffHome');
+                      Get.offNamed('/staffHome');
                     }
                   }
                 } on FirebaseAuthException catch (e) {
@@ -127,7 +127,7 @@ class _LoginState extends State<Login> {
                 const Text('Create an account?'),
                 TextButton(
                   onPressed: () {
-                    Get.toNamed('/register');
+                    Get.offNamed('/register');
                   },
                   child: const Text(
                     'Register',

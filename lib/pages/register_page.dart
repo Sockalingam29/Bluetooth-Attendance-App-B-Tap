@@ -144,7 +144,7 @@ class _RegisterState extends State<Register> {
                   const Text('Already have an account?'),
                   TextButton(
                     onPressed: () {
-                      Get.toNamed('/login');
+                      Get.offNamed('/login');
                     },
                     child: const Text(
                       'Login',
