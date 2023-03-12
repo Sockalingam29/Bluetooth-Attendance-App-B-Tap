@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, use_build_context_synchronously
+
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,6 +19,7 @@ class StudentHomePage extends StatefulWidget {
 class _StudentHomePageState extends State<StudentHomePage> {
   User? user = FirebaseAuth.instance.currentUser;
   late final String currEmail = user?.email.toString() ?? "null";
+
   final Strategy strategy = Strategy.P2P_STAR;
   Map<String, ConnectionInfo> endpointMap = Map();
 
@@ -64,15 +67,16 @@ class _StudentHomePageState extends State<StudentHomePage> {
                     print("endpoint found");
                     print(name);
                     print("Found endpoint: $id, $name, $serviceId");
-                    if (name == "TCE_Faculty") {
+                    if (name.startsWith("TCE_Faculty")) {
                       try {
                         // add if not exists, else update
+                        DateTime now = DateTime.now();
+                        String formattedDate =
+                            '${now.day.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.year}';
+
                         var db = FirebaseFirestore.instance
-                            .collection(DateTime(DateTime.now().year,
-                                    DateTime.now().month, DateTime.now().day)
-                                .toString()
-                                .replaceAll("00:00:00.000", ""))
-                            .doc('Maths');
+                            .collection(formattedDate)
+                            .doc(name.replaceAll("TCE_Faculty ", ""));
                         var data = await db.get();
 
                         if (!data.exists) {
@@ -100,7 +104,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
                         "Lost discovered Endpoint: ${endpointMap[id]!.endpointName}, id $id");
                   },
                 );
-                showSnackbar("DISCOVERING: " + a.toString());
+                showSnackbar("DISCOVERING: $a");
               } catch (e) {
                 showSnackbar(e);
               }
@@ -131,9 +135,9 @@ class _StudentHomePageState extends State<StudentHomePage> {
               Text("id: $id"),
               Text("Token: ${info.authenticationToken}"),
               Text("Name: ${info.endpointName}"),
-              Text("Incoming: " + info.isIncomingConnection.toString()),
+              Text("Incoming: ${info.isIncomingConnection}"),
               ElevatedButton(
-                child: Text("Accept Connection"),
+                child: const Text("Accept Connection"),
                 onPressed: () {
                   Navigator.pop(context);
                   setState(() {
@@ -147,7 +151,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
                 },
               ),
               ElevatedButton(
-                child: Text("Reject Connection"),
+                child: const Text("Reject Connection"),
                 onPressed: () async {
                   Navigator.pop(context);
                   try {

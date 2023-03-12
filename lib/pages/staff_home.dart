@@ -1,16 +1,14 @@
-// ignore_for_file: use_build_context_synchronously, unnecessary_new
+// ignore_for_file: use_build_context_synchronously, unnecessary_new, avoid_print
 
-import 'dart:math';
-
+// import 'dart:math';
 // import 'package:att_blue/pages/student_list.dart';
-import 'package:att_blue/models/sub.dart';
+// import 'package:att_blue/models/sub.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:nearby_connections/nearby_connections.dart';
-
-import 'list.dart';
+import 'student_list.dart';
 
 class StaffHomePage extends StatefulWidget {
   const StaffHomePage({Key? key}) : super(key: key);
@@ -21,13 +19,11 @@ class StaffHomePage extends StatefulWidget {
 }
 
 class _StaffHomePage extends State<StaffHomePage> {
-  // Initial Selected Value
-  String dropdownvalue1 = "Semester 1";
-  String dropdownvalue2 = "Subject 1";
-
+  String semesterChoosen = "Select a Option";
+  String subjectChoosen = "Select a Option";
   TextEditingController dateController = TextEditingController();
 
-  final String userName = "TCE_Faculty";
+  String userName = "";
   final Strategy strategy = Strategy.P2P_STAR; //1 to N
   Map<String, ConnectionInfo> endpointMap = Map(); //connection details
 
@@ -42,20 +38,20 @@ class _StaffHomePage extends State<StaffHomePage> {
   }
 
   // List of items in our dropdown menu
-  var sem = [
+  var semester = [
+    "Select a Option",
     "Semester 1",
     "Semester 2",
     "Semester 3",
     "Semester 4",
-    "Semester 5",
   ];
 
-  var sub = [
+  var subject = [
+    "Select a Option",
     "Subject 1",
     "Subject 2",
     "Subject 3",
     "Subject 4",
-    "Subject 5",
   ];
 
   Widget _takeAttendance() {
@@ -78,25 +74,32 @@ class _StaffHomePage extends State<StaffHomePage> {
             //     content: Text("Bluetooth permissions not granted :(")));
           }
 
-          try {
-            bool a = await Nearby().startAdvertising(
-              userName,
-              strategy,
-              onConnectionInitiated: onConnectionInit,
-              onConnectionResult: (id, status) {
-                showSnackbar(status);
-              },
-              onDisconnected: (id) {
-                showSnackbar(
-                    "Disconnected: ${endpointMap[id]!.endpointName}, id $id");
-                setState(() {
-                  endpointMap.remove(id);
-                });
-              },
-            );
-            showSnackbar("ADVERTISING: " + a.toString());
-          } catch (exception) {
-            showSnackbar(exception);
+          if (semesterChoosen != "Select a Option" &&
+              subjectChoosen != "Select a Option") {
+            try {
+              userName = "TCE_Faculty $semesterChoosen $subjectChoosen";
+              bool a = await Nearby().startAdvertising(
+                userName,
+                strategy,
+                onConnectionInitiated: onConnectionInit,
+                onConnectionResult: (id, status) {
+                  showSnackbar(status);
+                },
+                onDisconnected: (id) {
+                  showSnackbar(
+                      "Disconnected: ${endpointMap[id]!.endpointName}, id $id");
+                  setState(() {
+                    endpointMap.remove(id);
+                  });
+                },
+              );
+              showSnackbar("ADVERTISING: $a");
+            } catch (exception) {
+              showSnackbar(exception);
+            }
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Please Select All Fields")));
           }
         });
   }
@@ -105,6 +108,7 @@ class _StaffHomePage extends State<StaffHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text("TCE Faculty"),
         actions: [
           GestureDetector(
@@ -125,47 +129,34 @@ class _StaffHomePage extends State<StaffHomePage> {
             children: [
               const Text("Choose Semester"),
               DropdownButton(
-                // Initial Value
-                value: dropdownvalue1,
-
-                // Down Arrow Icon
+                value: semesterChoosen,
                 icon: const Icon(Icons.keyboard_arrow_down),
-
-                // Array list of items
-                items: sem.map((String items) {
+                items: semester.map((String items) {
                   return DropdownMenuItem(
                     value: items,
                     child: Text(items),
                   );
                 }).toList(),
-                // After selecting the desired option,it will
-                // change button value to selected value
                 onChanged: (String? newValue) {
                   setState(() {
-                    dropdownvalue1 = newValue!;
+                    semesterChoosen = newValue!;
                   });
                 },
               ),
               const Text('Choose Subject'),
               DropdownButton(
-                // Initial Value
-                value: dropdownvalue2,
-
-                // Down Arrow Icon
-                icon: const Icon(Icons.keyboard_arrow_down),
-
-                // Array list of items
-                items: sub.map((String items) {
+                value: subjectChoosen, // Initial Value
+                icon: const Icon(Icons.keyboard_arrow_down), // Down Arrow Icon
+                items: subject.map((String items) {
                   return DropdownMenuItem(
                     value: items,
                     child: Text(items),
                   );
                 }).toList(),
-                // After selecting the desired option,it will
-                // change button value to selected value
+                // After selecting the desired option,it will change button value to selected value
                 onChanged: (String? newValue) {
                   setState(() {
-                    dropdownvalue2 = newValue!;
+                    subjectChoosen = newValue!;
                   });
                 },
               ),
@@ -204,13 +195,21 @@ class _StaffHomePage extends State<StaffHomePage> {
               ),
               ElevatedButton(
                   onPressed: () {
-                    // Subdetails SD = Subdetails();
-                    // SD.subname = dropdownvalue2;
+                    // print("$semesterChoosen $subjectChoosen ${dateController.text}");
 
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                      return ItemList();
-                    }));
+                    if (semesterChoosen == "Select a Option" ||
+                        subjectChoosen == "Select a Option" ||
+                        dateController.text == "") {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text("Please Select All Fields")));
+                      return;
+                    }
+
+                    Get.toNamed('/studentList', arguments: {
+                      "semester": semesterChoosen,
+                      "subject": subjectChoosen,
+                      "date": dateController.text
+                    });
                   },
                   child: const Text("Student List")),
             ],
