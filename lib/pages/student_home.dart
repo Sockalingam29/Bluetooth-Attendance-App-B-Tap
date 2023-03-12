@@ -70,10 +70,12 @@ class _StudentHomePageState extends State<StudentHomePage> {
                     if (name.startsWith("TCE_Faculty")) {
                       try {
                         // add if not exists, else update
+                        DateTime now = DateTime.now();
+                        String formattedDate =
+                            '${now.day.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.year}';
+
                         var db = FirebaseFirestore.instance
-                            .collection(DateTime(DateTime.now().day,DateTime.now().month,DateTime.now().year)
-                                .toString()
-                                .replaceAll("00:00:00.000", ""))
+                            .collection(formattedDate)
                             .doc(name.replaceAll("TCE_Faculty ", ""));
                         var data = await db.get();
 
