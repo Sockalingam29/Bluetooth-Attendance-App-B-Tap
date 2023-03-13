@@ -1,4 +1,5 @@
 import 'package:att_blue/pages/home_page.dart';
+import 'package:att_blue/pages/student_home2.dart';
 import 'package:att_blue/pages/student_list.dart';
 import 'package:att_blue/pages/login_page.dart';
 import 'package:att_blue/pages/staff_home.dart';
@@ -43,12 +44,12 @@ class _MyAppState extends State<MyApp> {
       // home: user != null ? Register() : Login(),
       routes: {
         '/': (context) => user != null
-            ? (isStudent ? const StudentHomePage() : const StaffHomePage())
+            ? (isStudent ? const StudentHome2() : const StaffHomePage())
             : const Login(),
         '/login': (context) => const Login(),
         '/register': (context) => const Register(),
         '/studentHome': (context) =>
-            user != null ? const StudentHomePage() : const Login(),
+            user != null ? const StudentHome2() : const Login(),
         '/staffHome': (context) =>
             user != null ? const StaffHomePage() : const Login(),
         '/studentList': (context) =>
