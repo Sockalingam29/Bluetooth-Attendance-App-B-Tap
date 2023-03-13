@@ -10,6 +10,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
 
+import 'package:att_blue/pages/test.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -44,7 +46,7 @@ class _MyAppState extends State<MyApp> {
       routes: {
         '/': (context) => user != null
             ? (isStudent ? const StudentHomePage() : const StaffHomePage())
-            : const Login(),
+            : MyPage(),
         '/login': (context) => const Login(),
         '/register': (context) => const Register(),
         '/studentHome': (context) =>

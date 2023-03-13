@@ -19,6 +19,8 @@ class StaffHomePage extends StatefulWidget {
 }
 
 class _StaffHomePage extends State<StaffHomePage> {
+  bool _isLoading = false;
+
   String semesterChoosen = "Select a Option";
   String subjectChoosen = "Select a Option";
   TextEditingController dateController = TextEditingController();
@@ -54,62 +56,96 @@ class _StaffHomePage extends State<StaffHomePage> {
     "Subject 4",
   ];
 
-  Widget _takeAttendance() {
-    return ElevatedButton(
-        child: const Text('Take Attendance'),
-        onPressed: () async {
-          if (!await Nearby().askLocationPermission()) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text("Location permissions not granted :(")));
-          }
+  Widget _takeAttendance(bool _isLoading) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        ElevatedButton(
+          onPressed: _isLoading ? null : _onPressed,
+          child: Text("Take attendance"),
+        ),
+        Visibility(
+          visible: _isLoading,
+          child: CircularProgressIndicator(),
+        ),
+        Visibility(
+          visible: _isLoading,
+          child: Positioned(
+            right: 0.0,
+            child: IconButton(
+              icon: Icon(Icons.cancel),
+              onPressed: _onCancel,
+            ),
+          ),
+        ),
+      ],
+    );
 
-          if (!await Nearby().enableLocationServices()) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text("Enabling Location Service Failed :(")));
-          }
+    // return SizedBox(
+    // width: double.infinity,
+    // height: 48,
+    // child: ElevatedButton(
+    //     onPressed: () async {
+    //       if (!await Nearby().askLocationPermission()) {
+    //         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+    //             content: Text("Location permissions not granted :(")));
+    //       }
 
-          if (!await Nearby().checkBluetoothPermission()) {
-            Nearby().askBluetoothPermission();
-            // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            //     content: Text("Bluetooth permissions not granted :(")));
-          }
+    //       if (!await Nearby().enableLocationServices()) {
+    //         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+    //             content: Text("Enabling Location Service Failed :(")));
+    //       }
 
-          if (semesterChoosen != "Select a Option" &&
-              subjectChoosen != "Select a Option") {
-            try {
-              userName = "TCE_Faculty $semesterChoosen $subjectChoosen";
-              bool a = await Nearby().startAdvertising(
-                userName,
-                strategy,
-                onConnectionInitiated: onConnectionInit,
-                onConnectionResult: (id, status) {
-                  showSnackbar(status);
-                },
-                onDisconnected: (id) {
-                  showSnackbar(
-                      "Disconnected: ${endpointMap[id]!.endpointName}, id $id");
-                  setState(() {
-                    endpointMap.remove(id);
-                  });
-                },
-              );
-              showSnackbar("ADVERTISING: $a");
-            } catch (exception) {
-              showSnackbar(exception);
-            }
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Please Select All Fields")));
-          }
-        });
+    //       if (!await Nearby().checkBluetoothPermission()) {
+    //         Nearby().askBluetoothPermission();
+    //         // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+    //         //     content: Text("Bluetooth permissions not granted :(")));
+    //       }
+
+    //       if (semesterChoosen != "Select a Option" &&
+    //           subjectChoosen != "Select a Option") {
+    //         try {
+    //           userName = "TCE_Faculty $semesterChoosen $subjectChoosen";
+    //           bool a = await Nearby().startAdvertising(
+    //             userName,
+    //             strategy,
+    //             onConnectionInitiated: onConnectionInit,
+    //             onConnectionResult: (id, status) {
+    //               showSnackbar(status);
+    //             },
+    //             onDisconnected: (id) {
+    //               showSnackbar(
+    //                   "Disconnected: ${endpointMap[id]!.endpointName}, id $id");
+    //               setState(() {
+    //                 endpointMap.remove(id);
+    //               });
+    //             },
+    //           );
+    //           showSnackbar("ADVERTISING: $a");
+    //         } catch (exception) {
+    //           showSnackbar(exception);
+    //         }
+    //       } else {
+    //         ScaffoldMessenger.of(context).showSnackBar(
+    //             const SnackBar(content: Text("Please Select All Fields")));
+    //       }
+    //     },
+    //     style: ElevatedButton.styleFrom(
+    //       backgroundColor: Colors.deepPurple,
+    //       shape: RoundedRectangleBorder(
+    //         borderRadius: BorderRadius.circular(8.0),
+    //       ),
+    //     ),
+    //     child: const Text('Take Attendance')));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.deepPurple,
         automaticallyImplyLeading: false,
-        title: const Text("TCE Faculty"),
+        title: const Text("Faculty Home"),
         actions: [
           GestureDetector(
               child: const Icon(Icons.logout_sharp),
@@ -186,7 +222,7 @@ class _StaffHomePage extends State<StaffHomePage> {
               const SizedBox(
                 height: 60.0,
               ),
-              _takeAttendance(),
+              _takeAttendance(_isLoading),
               ElevatedButton(
                 child: Text("Stop Advertising"),
                 onPressed: () async {
@@ -195,7 +231,8 @@ class _StaffHomePage extends State<StaffHomePage> {
               ),
               ElevatedButton(
                   onPressed: () {
-                    print("$semesterChoosen $subjectChoosen ${dateController.text}");
+                    print(
+                        "$semesterChoosen $subjectChoosen ${dateController.text}");
 
                     // Get.toNamed('/staffHome');
                   },
@@ -205,6 +242,23 @@ class _StaffHomePage extends State<StaffHomePage> {
         ),
       ),
     );
+  }
+
+  void _onPressed() async {
+    setState(() {
+      _isLoading = true;
+    });
+    // timeout 2 secs
+    await Future.delayed(const Duration(seconds: 2));
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  void _onCancel() {
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   void showSnackbar(dynamic a) {
