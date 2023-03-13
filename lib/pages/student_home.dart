@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:nearby_connections/nearby_connections.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+// import 'package:flutter/animations.dart'
 
 class StudentHomePage extends StatefulWidget {
   const StudentHomePage({super.key});
@@ -96,6 +97,9 @@ class _StudentHomePageState extends State<StudentHomePage> {
                                 content: Text("Attendance recorded!! :)")));
                       } on FirebaseAuthException catch (e) {
                         print("Error $e");
+                      } finally {
+                        print("finally");
+                        await Nearby().stopDiscovery();
                       }
                     }
                   },
