@@ -157,9 +157,10 @@ class _StudentListState extends State<StudentList> {
                               const SizedBox(height: 30),
                               Text(user.length.toString() +
                                   " students are present"),
-                              const SizedBox(height: 30),
+                              const SizedBox(height: 10),
                               SizedBox(
-                                height: 600,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.7,
                                 child: Padding(
                                   padding: const EdgeInsets.all(14.0),
                                   child: ListView.separated(
@@ -170,8 +171,8 @@ class _StudentListState extends State<StudentList> {
                                         title: Text(
                                             user[index]['Register number']),
                                         subtitle: Text(user[index]['Name']),
-                                        tileColor:
-                                            const Color.fromARGB(255, 168, 197, 219),
+                                        tileColor: const Color.fromARGB(
+                                            255, 168, 197, 219),
                                       );
                                     },
                                     separatorBuilder:
