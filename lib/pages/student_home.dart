@@ -67,14 +67,14 @@ class _StudentHomePageState extends State<StudentHomePage> {
                     ),
                   ),
                 )
-              else if (flag == 2)
+              else if (flag == 1)
                 RipplesAnimation(
                   onPressed: () {
                     print("data");
                   },
                   child: const Text("data"),
                 )
-              else if (flag == 1)
+              else if (flag == 2)
                 Center(
                   child: Column(
                     children: [

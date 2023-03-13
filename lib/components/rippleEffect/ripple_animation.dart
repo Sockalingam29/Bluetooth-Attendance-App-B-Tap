@@ -11,7 +11,7 @@ class RipplesAnimation extends StatefulWidget {
   const RipplesAnimation({
     Key? key,
     this.size = 80.0,
-    this.color = Colors.red,
+    this.color = const Color.fromARGB(255, 77, 178, 255),
     required this.onPressed,
     required this.child,
   }) : super(key: key);
@@ -43,39 +43,37 @@ class _RipplesAnimationState extends State<RipplesAnimation>
   }
 
   Widget _button() {
-    return Center(
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(widget.size),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: RadialGradient(
-              colors: <Color>[
-                widget.color,
-                // Color.lerp(widget.color, Colors.black, .05)
-                Colors.black,
-              ],
-            ),
-          ),
-          child: ScaleTransition(
-              scale: Tween(begin: 0.95, end: 1.0).animate(
-                CurvedAnimation(
-                  parent: _controller,
-                  curve: const CurveWave(),
+    return GestureDetector(
+        onTap: () {
+          print("Data");
+        },
+        child: Center(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(widget.size),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: RadialGradient(
+                  colors: <Color>[
+                    widget.color,
+                    Color.lerp(widget.color, Colors.black, 0.2) ?? Colors.black,
+                  ],
                 ),
               ),
-              child: const Icon(Icons.bluetooth, size: 44)),
-        ),
-      ),
-    );
+              child: ScaleTransition(
+                  scale: Tween(begin: 0.95, end: 1.0).animate(
+                    CurvedAnimation(
+                      parent: _controller,
+                      curve: const CurveWave(),
+                    ),
+                  ),
+                  child: const Icon(Icons.bluetooth, size: 44)),
+            ),
+          ),
+        ));
   }
 
   @override
   Widget build(BuildContext context) {
-    // return Scaffold(
-    //   appBar: AppBar(
-    //     title: const Text("Flutter Ripple Demo"),
-    //   ),
-    //   body:
     return Center(
       child: CustomPaint(
         painter: CirclePainter(
