@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_import, duplicate_import
+
 import 'package:flutter/material.dart';
 import 'package:flutter/animation.dart';
 import 'package:att_blue/components/rippleEffect/circle_painter.dart';

@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import
+
 import 'package:att_blue/pages/home_page.dart';
 import 'package:att_blue/pages/student_home2.dart';
 import 'package:att_blue/pages/student_list.dart';
@@ -14,10 +16,12 @@ import 'package:get/get.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
   State<MyApp> createState() => _MyAppState();
 }

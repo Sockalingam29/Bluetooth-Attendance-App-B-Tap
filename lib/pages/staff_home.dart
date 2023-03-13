@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, unnecessary_new, avoid_print
+// ignore_for_file: use_build_context_synchronously, unnecessary_new, avoid_print, depend_on_referenced_packages, unused_import
 
 // import 'dart:math';
 // import 'package:att_blue/pages/student_list.dart';
@@ -25,11 +25,10 @@ class _StaffHomePage extends State<StaffHomePage> {
 
   String userName = "";
   final Strategy strategy = Strategy.P2P_STAR; //1 to N
-  Map<String, ConnectionInfo> endpointMap = Map(); //connection details
+  Map<String, ConnectionInfo> endpointMap = {}; //connection details
 
   String? tempFileUri; //reference to the file currently being transferred
-  Map<int, String> map =
-      Map(); //store filename mapped to corresponding payloadId
+  Map<int, String> map = {}; //store filename mapped to corresponding payloadId
 
   @override
   void initState() {
@@ -188,7 +187,7 @@ class _StaffHomePage extends State<StaffHomePage> {
               ),
               _takeAttendance(),
               ElevatedButton(
-                child: Text("Stop Advertising"),
+                child: const Text("Stop Advertising"),
                 onPressed: () async {
                   await Nearby().stopAdvertising();
                 },

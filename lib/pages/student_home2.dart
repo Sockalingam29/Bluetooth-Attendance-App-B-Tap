@@ -1,6 +1,5 @@
 
 import 'package:flutter/material.dart';
-import 'package:att_blue/components/rippleEffect/ripple_animation.dart';
 import 'package:att_blue/components/rippleEffect/splash_screen.dart';
 
 

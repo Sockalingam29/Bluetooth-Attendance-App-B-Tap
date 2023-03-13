@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_new
+// ignore_for_file: unnecessary_new, avoid_print
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -18,7 +18,7 @@ class VideoState extends State<Splash> with SingleTickerProviderStateMixin {
   late Animation<double> animation;
 
   startTime() async {
-    var duration = new Duration(seconds: 2);
+    var duration = const Duration(seconds: 2);
     return new Timer(duration, navigationPage);
   }
 
@@ -37,11 +37,11 @@ class VideoState extends State<Splash> with SingleTickerProviderStateMixin {
     super.initState();
 
     animationController = new AnimationController(
-        vsync: this, duration: new Duration(seconds: 1));
+        vsync: this, duration: const Duration(seconds: 1));
     animation =
         new CurvedAnimation(parent: animationController, curve: Curves.easeOut);
 
-    animation.addListener(() => this.setState(() {}));
+    animation.addListener(() => setState(() {}));
     animationController.forward();
 
     setState(() {
@@ -60,23 +60,27 @@ class VideoState extends State<Splash> with SingleTickerProviderStateMixin {
           new Column(
             mainAxisAlignment: MainAxisAlignment.end,
             mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
+            children: const [
               Padding(
                   padding: EdgeInsets.only(bottom: 30.0),
-                  child: new Image.asset(
-                    'assets/powered_by.png',
-                    height: 25.0,
-                    fit: BoxFit.scaleDown,
+                  child: Text(
+                    "Powered by",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold),
                   ))
             ],
           ),
           new Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              new Image.asset(
-                'assets/devs.jpg',
-                width: animation.value * 250,
-                height: animation.value * 250,
+            children: const [
+              Text(
+                "Att",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 50.0,
+                    fontWeight: FontWeight.bold),
               ),
             ],
           ),
