@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_new
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:att_blue/components/rippleEffect/ripple_animation.dart';

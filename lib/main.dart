@@ -44,12 +44,12 @@ class _MyAppState extends State<MyApp> {
       // home: user != null ? Register() : Login(),
       routes: {
         '/': (context) => user != null
-            ? (isStudent ? const StudentHome2() : const StaffHomePage())
+            ? (isStudent ? const StudentHomePage() : const StaffHomePage())
             : const Login(),
         '/login': (context) => const Login(),
         '/register': (context) => const Register(),
         '/studentHome': (context) =>
-            user != null ? const StudentHome2() : const Login(),
+            user != null ? const StudentHomePage() : const Login(),
         '/staffHome': (context) =>
             user != null ? const StaffHomePage() : const Login(),
         '/studentList': (context) =>

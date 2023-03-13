@@ -18,6 +18,7 @@ class RipplesAnimation extends StatefulWidget {
   final Widget child;
   final VoidCallback onPressed;
   @override
+  // ignore: library_private_types_in_public_api
   _RipplesAnimationState createState() => _RipplesAnimationState();
 }
 
@@ -40,49 +41,49 @@ class _RipplesAnimationState extends State<RipplesAnimation>
   }
 
   Widget _button() {
-    return const Center(child: Text("jhudu"));
+    return Center(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(widget.size),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: RadialGradient(
+              colors: <Color>[
+                widget.color,
+                // Color.lerp(widget.color, Colors.black, .05)
+                Colors.black,
+              ],
+            ),
+          ),
+          child: ScaleTransition(
+              scale: Tween(begin: 0.95, end: 1.0).animate(
+                CurvedAnimation(
+                  parent: _controller,
+                  curve: const CurveWave(),
+                ),
+              ),
+              child: const Icon(Icons.bluetooth, size: 44)),
+        ),
+      ),
+    );
   }
-  // child: ClipRRect(
-  //   borderRadius: BorderRadius.circular(widget.size),
-  //   child: DecoratedBox(
-  //     decoration: BoxDecoration(
-  //       gradient: RadialGradient(
-  //         colors: <Color>[
-  //           widget.color,
-  //           // Color.lerp(widget.color, Colors.black, .05)
-  //           Colors.black,
-  //         ],
-  //       ),
-  //     ),
-
-  //     child: ScaleTransition(
-  //         scale: Tween(begin: 0.95, end: 1.0).animate(
-  //           CurvedAnimation(
-  //             parent: _controller,
-  //             curve: const CurveWave(),
-  //           ),
-  //         ),
-  //         child: const Icon(Icons.speaker_phone, size: 44)),
-  //   ),
-  // ),
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Flutter Ripple Demo"),
-      ),
-      body: Center(
-        child: CustomPaint(
-          painter: CirclePainter(
-            _controller,
-            color: widget.color,
-          ),
-          child: SizedBox(
-            width: widget.size * 4.125,
-            height: widget.size * 4.125,
-            child: _button(),
-          ),
+    // return Scaffold(
+    //   appBar: AppBar(
+    //     title: const Text("Flutter Ripple Demo"),
+    //   ),
+    //   body:
+    return Center(
+      child: CustomPaint(
+        painter: CirclePainter(
+          _controller,
+          color: widget.color,
+        ),
+        child: SizedBox(
+          width: widget.size * 4.125,
+          height: widget.size * 4.125,
+          child: _button(),
         ),
       ),
     );

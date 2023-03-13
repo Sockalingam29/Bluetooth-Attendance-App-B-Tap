@@ -2,6 +2,8 @@
 
 import 'dart:math';
 
+import 'package:att_blue/components/rippleEffect/ripple_animation.dart';
+import 'package:att_blue/components/rippleEffect/splash_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +20,7 @@ class StudentHomePage extends StatefulWidget {
 }
 
 class _StudentHomePageState extends State<StudentHomePage> {
+  int flag = 0;
   User? user = FirebaseAuth.instance.currentUser;
   late final String currEmail = user?.email.toString() ?? "null";
 
@@ -40,87 +43,108 @@ class _StudentHomePageState extends State<StudentHomePage> {
           ],
         ),
         body: Center(
-            child: Column(children: [
-          ElevatedButton(
-            child: const Text("Start Discovery"),
-            onPressed: () async {
-              if (!await Nearby().askLocationPermission()) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text("Location permissions not granted :(")));
-              }
-
-              if (!await Nearby().enableLocationServices()) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text("Enabling Location Service Failed :(")));
-              }
-
-              if (!await Nearby().checkBluetoothPermission()) {
-                Nearby().askBluetoothPermission();
-                // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                //     content: Text("Bluetooth permissions not granted :(")));
-              }
-
-              try {
-                bool a = await Nearby().startDiscovery(
-                  currEmail,
-                  strategy,
-                  onEndpointFound: (id, name, serviceId) async {
-                    print("endpoint found");
-                    print(name);
-                    print("Found endpoint: $id, $name, $serviceId");
-                    if (name.startsWith("TCE_Faculty")) {
-                      try {
-                        // add if not exists, else update
-                        DateTime now = DateTime.now();
-                        String formattedDate =
-                            '${now.day.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.year}';
-
-                        var db = FirebaseFirestore.instance
-                            .collection(formattedDate)
-                            .doc(name.replaceAll("TCE_Faculty ", ""));
-                        var data = await db.get();
-
-                        if (!data.exists) {
-                          db.set({
-                            //append currmail to email key
-                            'email': FieldValue.arrayUnion([currEmail]),
-                          });
-                        } else {
-                          db.update({
-                            //append currmail to email key
-                            'email': FieldValue.arrayUnion([currEmail]),
-                          });
-                        }
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text("Attendance recorded!! :)")));
-                      } on FirebaseAuthException catch (e) {
-                        print("Error $e");
-                      } finally {
-                        print("finally");
-                        await Nearby().stopDiscovery();
-                      }
-                    }
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+              if (flag == 0)
+                GestureDetector(
+                  onTap: endPointFoundHandler,
+                  child: const Text("Start Discovery"),
+                )
+              else if (flag == 1)
+                RipplesAnimation(
+                  onPressed: () {
+                    print("data");
                   },
-                  onEndpointLost: (id) {
-                    showSnackbar(
-                        "Lost discovered Endpoint: ${endpointMap[id]!.endpointName}, id $id");
-                  },
-                );
-                showSnackbar("DISCOVERING: $a");
-              } catch (e) {
-                showSnackbar(e);
+                  child: const Text("data"),
+                )
+              else if (flag == 2)
+                const Text("Attendance recorded"),
+
+              // ElevatedButton(
+              //   child: const Text("Stop Discovery"),
+              //   onPressed: () async {
+              //     await Nearby().stopDiscovery();
+              //   },
+              // ),
+            ])));
+  }
+
+  void endPointFoundHandler() async {
+    setState(() {
+      flag = 1;
+    });
+    if (!await Nearby().askLocationPermission()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Location permissions not granted :(")));
+    }
+
+    if (!await Nearby().enableLocationServices()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Enabling Location Service Failed :(")));
+    }
+
+    if (!await Nearby().checkBluetoothPermission()) {
+      Nearby().askBluetoothPermission();
+      // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      //     content: Text("Bluetooth permissions not granted :(")));
+    }
+
+    try {
+      bool a = await Nearby().startDiscovery(
+        currEmail,
+        strategy,
+        onEndpointFound: (id, name, serviceId) async {
+          print("endpoint found");
+          print(name);
+          print("Found endpoint: $id, $name, $serviceId");
+          if (name.startsWith("TCE_Faculty")) {
+            try {
+              // add if not exists, else update
+              DateTime now = DateTime.now();
+              String formattedDate =
+                  '${now.day.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.year}';
+
+              var db = FirebaseFirestore.instance
+                  .collection(formattedDate)
+                  .doc(name.replaceAll("TCE_Faculty ", ""));
+              var data = await db.get();
+
+              if (!data.exists) {
+                db.set({
+                  //append currmail to email key
+                  'email': FieldValue.arrayUnion([currEmail]),
+                });
+              } else {
+                db.update({
+                  //append currmail to email key
+                  'email': FieldValue.arrayUnion([currEmail]),
+                });
               }
-            },
-          ),
-          ElevatedButton(
-            child: const Text("Stop Discovery"),
-            onPressed: () async {
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Attendance recorded!! :)")));
+            } on FirebaseAuthException catch (e) {
+              print("Error $e");
+            } finally {
+              print("finally");
               await Nearby().stopDiscovery();
-            },
-          ),
-        ])));
+              setState(() {
+                flag = 2;
+              });
+            }
+          }
+        },
+        onEndpointLost: (id) {
+          showSnackbar(
+              "Lost discovered Endpoint: ${endpointMap[id]!.endpointName}, id $id");
+        },
+      );
+      showSnackbar("DISCOVERING: $a");
+    } catch (e) {
+      showSnackbar(e);
+    }
   }
 
   void showSnackbar(dynamic a) {
