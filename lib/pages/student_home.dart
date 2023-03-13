@@ -69,11 +69,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
               else if (flag == 1)
                 RipplesAnimation(
                   onPressed: () async {
-                    await Nearby().stopDiscovery();
-                    setState(() {
-                      flag = 2;
-                    });
-                    ;
+                    print("Ripple Animation");
                   },
                   child: const Text("data"),
                 )
@@ -123,20 +119,10 @@ class _StudentHomePageState extends State<StudentHomePage> {
                     ],
                   ),
                 ),
-
-              // ElevatedButton(
-              //   child: const Text("Stop Discovery"),
-              //   onPressed: () async {
-              //     await Nearby().stopDiscovery();
-              //   },
-              // ),
             ])));
   }
 
   void endPointFoundHandler() async {
-    setState(() {
-      flag = 1;
-    });
     if (!await Nearby().askLocationPermission()) {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Location permissions not granted :(")));
@@ -149,9 +135,13 @@ class _StudentHomePageState extends State<StudentHomePage> {
 
     if (!await Nearby().checkBluetoothPermission()) {
       Nearby().askBluetoothPermission();
-      // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      //     content: Text("Bluetooth permissions not granted :(")));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Bluetooth permissions not granted :(")));
     }
+
+    setState(() {
+      flag = 1;
+    });
 
     try {
       bool a = await Nearby().startDiscovery(
@@ -184,17 +174,16 @@ class _StudentHomePageState extends State<StudentHomePage> {
                   'email': FieldValue.arrayUnion([currEmail]),
                 });
               }
-
+              await Nearby().stopDiscovery();
               ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text("Attendance recorded!! :)")));
-            } on FirebaseAuthException catch (e) {
-              print("Error $e");
-            } finally {
-              print("finally");
-              await Nearby().stopDiscovery();
               setState(() {
                 flag = 2;
               });
+            } on FirebaseAuthException catch (e) {
+              print("Error $e");
+            } catch (e) {
+              showSnackbar("Error: $e");
             }
           }
         },

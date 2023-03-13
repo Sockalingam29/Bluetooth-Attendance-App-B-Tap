@@ -46,68 +46,6 @@ class _StudentListState extends State<StudentList> {
       body: Center(
         child: Column(
           children: [
-            // ElevatedButton(
-            //     onPressed: () async {
-            //       List<Map<String, dynamic>> tmp = [];
-            //       var userData = await userCollection.get();
-            //       var currentData = await currentDateCollection.get();
-            //       // print("First element in currentDate Collection : " +currentData.data()['email'][0]);
-            //       if (currentData.data() != null) {
-            //         userData.docs.forEach((element) {
-            //           for (int i = 0;
-            //               i < currentData.data()['email'].length;
-            //               i++) {
-            //             // print(currentData.data()['email'][i] +" " +element.data()['Email']);
-            //             if (currentData.data()['email'][i].toString() ==
-            //                 element.data()['Email'].toString()) {
-            //               tmp.add(element.data());
-            //               print("Added");
-            //               print(element.data()['Email']);
-            //             }
-            //           }
-            //           // print(element.data()['Name']);
-            //         });
-            //       }
-            //       tmp.forEach((element) {
-            //         log(element['Name']);
-            //       });
-            //       setState(() {
-            //         _studentList = tmp;
-            //         isLoaded = true;
-            //       });
-            //     },
-            //     child: const Text('List Users')),
-            // //
-            // const SizedBox(height: 30),
-            //
-            // if (isLoaded)
-            //   const Text(
-            //   "Present Students: ",
-            //   style: TextStyle(fontSize: 20),
-            //   textAlign: TextAlign.left,
-            // ),
-            //
-            // if (isLoaded)
-            //   Expanded(
-            //       child: Padding(
-            //     padding: const EdgeInsets.all(13.0),
-            //     child: ListView.separated(
-            //       itemCount: _studentList.length,
-            //       itemBuilder: (BuildContext context, int index) {
-            //         return ListTile(
-            //           title: Text(_studentList[index]['Name']),
-            //           subtitle: Text(_studentList[index]['Register number']),
-            //           tileColor: const Color.fromARGB(255, 168, 197, 219),
-            //         );
-            //       },
-            //       separatorBuilder: (BuildContext context, int index) {
-            //         return const Divider(
-            //           color: Colors.black,
-            //         );
-            //       },
-            //     ),
-            //   )),
-            // //
             StreamBuilder<QuerySnapshot>(
                 stream: currentDateStream,
                 builder: (context, snapshot) {
