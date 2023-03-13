@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print, use_build_context_synchronously
 
+import 'package:att_blue/components/checkmark.dart';
 import 'package:att_blue/components/rippleEffect/ripple_animation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -28,6 +29,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
     return Scaffold(
         appBar: AppBar(
           title: const Text("Student HomePage"),
+          backgroundColor: Colors.deepPurple,
           actions: [
             CircleAvatar(
               radius: 20,
@@ -52,19 +54,23 @@ class _StudentHomePageState extends State<StudentHomePage> {
                 GestureDetector(
                   onTap: endPointFoundHandler,
                   child: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.blue),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Text(
-                      "Start Discovery",
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 20,
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.blue),
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                    ),
-                  ),
+                      child: Column(
+                        children: const [
+                          Icon(Icons.bluetooth, size: 72, color: Colors.blue),
+                          Text(
+                            "Start Discovery",
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontSize: 20,
+                            ),
+                          )
+                        ],
+                      )),
                 )
               else if (flag == 1)
                 RipplesAnimation(
@@ -77,16 +83,12 @@ class _StudentHomePageState extends State<StudentHomePage> {
                 Center(
                   child: Column(
                     children: [
+                      const CheckMarkPage(),
+                      const SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: const [
-                          Icon(
-                            Icons.check_circle_outline,
-                            color: Colors.green,
-                            size: 40,
-                          ),
-                          SizedBox(width: 10),
                           Text("Attendance recorded",
                               style: TextStyle(fontSize: 20)),
                         ],
