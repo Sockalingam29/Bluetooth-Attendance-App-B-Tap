@@ -1,6 +1,5 @@
 // ignore_for_file: avoid_print, use_build_context_synchronously
 
-
 import 'package:att_blue/components/rippleEffect/ripple_animation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -69,8 +68,12 @@ class _StudentHomePageState extends State<StudentHomePage> {
                 )
               else if (flag == 1)
                 RipplesAnimation(
-                  onPressed: () {
-                    print("data");
+                  onPressed: () async {
+                    await Nearby().stopDiscovery();
+                    setState(() {
+                      flag = 2;
+                    });
+                    ;
                   },
                   child: const Text("data"),
                 )
@@ -94,7 +97,11 @@ class _StudentHomePageState extends State<StudentHomePage> {
                       ),
                       const SizedBox(height: 30),
                       ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            setState(() {
+                              flag = 0;
+                            });
+                          },
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.white,
                             backgroundColor:

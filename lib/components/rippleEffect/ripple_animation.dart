@@ -45,7 +45,7 @@ class _RipplesAnimationState extends State<RipplesAnimation>
   Widget _button() {
     return GestureDetector(
         onTap: () {
-          print("Data");
+          widget.onPressed();
         },
         child: Center(
           child: ClipRRect(
