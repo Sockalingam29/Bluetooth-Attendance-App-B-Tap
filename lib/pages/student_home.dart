@@ -1,14 +1,11 @@
 // ignore_for_file: avoid_print, use_build_context_synchronously
 
-import 'dart:math';
 
 import 'package:att_blue/components/rippleEffect/ripple_animation.dart';
-import 'package:att_blue/components/rippleEffect/splash_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nearby_connections/nearby_connections.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 // import 'package:flutter/animations.dart'
 
@@ -25,7 +22,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
   late final String currEmail = user?.email.toString() ?? "null";
 
   final Strategy strategy = Strategy.P2P_STAR;
-  Map<String, ConnectionInfo> endpointMap = Map();
+  Map<String, ConnectionInfo> endpointMap = {};
 
   @override
   Widget build(BuildContext context) {
@@ -33,13 +30,18 @@ class _StudentHomePageState extends State<StudentHomePage> {
         appBar: AppBar(
           title: const Text("Student HomePage"),
           actions: [
-            GestureDetector(
-                child: const Icon(Icons.logout_sharp),
+            CircleAvatar(
+              radius: 20,
+              backgroundColor: Colors.white,
+              child: GestureDetector(
                 onTap: () async {
                   await Nearby().stopDiscovery();
                   await FirebaseAuth.instance.signOut();
                   Get.toNamed('/login');
-                }),
+                },
+                child: const Icon(Icons.logout_sharp),
+              ),
+            )
           ],
         ),
         body: Center(
@@ -50,17 +52,70 @@ class _StudentHomePageState extends State<StudentHomePage> {
               if (flag == 0)
                 GestureDetector(
                   onTap: endPointFoundHandler,
-                  child: const Text("Start Discovery"),
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.blue),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Text(
+                      "Start Discovery",
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
                 )
-              else if (flag == 1)
+              else if (flag == 2)
                 RipplesAnimation(
                   onPressed: () {
                     print("data");
                   },
                   child: const Text("data"),
                 )
-              else if (flag == 2)
-                const Text("Attendance recorded"),
+              else if (flag == 1)
+                Center(
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: const [
+                          Icon(
+                            Icons.check_circle_outline,
+                            color: Colors.green,
+                            size: 40,
+                          ),
+                          SizedBox(width: 10),
+                          Text("Attendance recorded",
+                              style: TextStyle(fontSize: 20)),
+                        ],
+                      ),
+                      const SizedBox(height: 30),
+                      ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor:
+                                const Color.fromARGB(255, 243, 86, 33),
+                            minimumSize: const Size(100, 60),
+                            maximumSize: const Size(150, 60),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(32.0),
+                            ),
+                          ),
+                          child: Row(
+                            children: const [
+                              SizedBox(width: 10),
+                              Icon(Icons.logout, size: 26),
+                              SizedBox(width: 10),
+                              Text("Logout", style: TextStyle(fontSize: 18)),
+                            ],
+                          )),
+                    ],
+                  ),
+                ),
 
               // ElevatedButton(
               //   child: const Text("Stop Discovery"),
