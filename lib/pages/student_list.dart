@@ -29,7 +29,7 @@ class _StudentListState extends State<StudentList> {
     subject = Get.arguments['subject'];
     semester = Get.arguments['semester'];
     date = Get.arguments['date'];
-    // log(subject + " " + semester + " " + date);
+    // print(subject + " " + semester + " " + date);
     userCollection = FirebaseFirestore.instance.collection('Users');
     userStream = FirebaseFirestore.instance.collection('Users').snapshots();
 
@@ -57,10 +57,13 @@ class _StudentListState extends State<StudentList> {
                   }
                   if (snapshot.hasData) {
                     List<dynamic> email = [];
+                    
                     snapshot.data!.docs.forEach((element) {
-                      Map<String, dynamic> data =
-                          element.data()! as Map<String, dynamic>;
-                      email = data['email'] as List<dynamic>;
+                      if(element.id=="$semester $subject"){
+                        Map<String, dynamic> data =
+                            element.data()! as Map<String, dynamic>;
+                        email = data['email'] as List<dynamic>;
+                      }
                     });
 
                     return StreamBuilder<QuerySnapshot>(
@@ -83,7 +86,7 @@ class _StudentListState extends State<StudentList> {
                               user.add(userLocal);
                             }
                           });
-                          print(user);
+                          // print(user);
                           return Column(
                             children: [
                               const SizedBox(height: 30),
