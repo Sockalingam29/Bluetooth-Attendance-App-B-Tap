@@ -109,7 +109,7 @@ class _StaffHomePage extends State<StaffHomePage> {
               }
             })
         : ElevatedButton(
-            child: const Text('Stop Attendance'),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () async {
               try {
                 await Nearby().stopAdvertising();
@@ -121,7 +121,8 @@ class _StaffHomePage extends State<StaffHomePage> {
               } catch (exception) {
                 showSnackbar(exception);
               }
-            });
+            },
+            child: const Text('Stop Attendance'));
   }
 
   @override
