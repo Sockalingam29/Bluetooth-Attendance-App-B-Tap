@@ -38,7 +38,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
                 onTap: () async {
                   await Nearby().stopDiscovery();
                   await FirebaseAuth.instance.signOut();
-                  Get.toNamed('/login');
+                  Get.offNamed('/login');
                 },
                 child: const Icon(Icons.logout_sharp),
               ),
@@ -55,17 +55,35 @@ class _StudentHomePageState extends State<StudentHomePage> {
                   onTap: endPointFoundHandler,
                   child: Container(
                       padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.blue),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
                       child: Column(
-                        children: const [
-                          Icon(Icons.bluetooth, size: 72, color: Colors.blue),
-                          Text(
-                            "Start Discovery",
+                        children: [
+                          Column(
+                            children: [
+                              Container(
+                                  padding: const EdgeInsets.all(20),
+                                  margin: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.deepPurple,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.white.withOpacity(0.5),
+                                        spreadRadius: 5,
+                                        blurRadius: 7,
+                                        offset: const Offset(
+                                            0, 3), // changes position of shadow
+                                      )
+                                    ],
+                                    border: Border.all(color: Colors.grey),
+                                    borderRadius: BorderRadius.circular(72),
+                                  ),
+                                  child: const Icon(Icons.bluetooth,
+                                      size: 84, color: Colors.white)),
+                            ],
+                          ),
+                          const Text(
+                            "Tap to mark attendance",
                             style: TextStyle(
-                              color: Colors.blue,
+                              color: Colors.black,
                               fontSize: 20,
                             ),
                           )

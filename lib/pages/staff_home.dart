@@ -141,7 +141,7 @@ class _StaffHomePage extends State<StaffHomePage> {
               onTap: () async {
                 await Nearby().stopAdvertising();
                 await FirebaseAuth.instance.signOut();
-                Get.toNamed('/login');
+                Get.offNamed('/login');
               }),
         ],
       ),

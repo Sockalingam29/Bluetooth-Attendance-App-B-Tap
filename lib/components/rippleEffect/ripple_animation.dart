@@ -10,8 +10,8 @@ import 'circle_painter.dart';
 class RipplesAnimation extends StatefulWidget {
   const RipplesAnimation({
     Key? key,
-    this.size = 92.0,
-    this.color = const Color.fromARGB(255, 77, 178, 255),
+    this.size = 108.0,
+    this.color = const Color(0xFF673AB7),
     required this.onPressed,
     required this.child,
   }) : super(key: key);
@@ -31,7 +31,7 @@ class _RipplesAnimationState extends State<RipplesAnimation>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 2000),
+      duration: const Duration(milliseconds: 1000),
       vsync: this,
     )..repeat();
   }
@@ -48,30 +48,34 @@ class _RipplesAnimationState extends State<RipplesAnimation>
           widget.onPressed();
         },
         child: Center(
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(widget.size),
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: RadialGradient(
-                  colors: <Color>[
-                    widget.color,
-                    Color(0x007cf0),
-                    // Color.lerp(widget.color, Colors.black, 0.2) ?? Colors.black,
-                  ],
-                ),
+            child: ClipRRect(
+          borderRadius: BorderRadius.circular(72),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: RadialGradient(
+                colors: <Color>[
+                  widget.color,
+                  const Color(0xFF673AB7),
+                  // Color.lerp(widget.color, Colors.black, 0.2) ?? Colors.black,
+                ],
               ),
-              child: ScaleTransition(
-                  scale: Tween(begin: 0.95, end: 1.0).animate(
-                    CurvedAnimation(
-                      parent: _controller,
-                      curve: const CurveWave(),
-                    ),
-                  ),
-                  child: const Icon(Icons.bluetooth,
-                      size: 72, color: Colors.white)),
             ),
+            child: ScaleTransition(
+                scale: Tween(begin: 0.95, end: 1.0).animate(
+                  CurvedAnimation(
+                    parent: _controller,
+                    curve: const CurveWave(),
+                  ),
+                ),
+                child: Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(72),
+                    ),
+                    child: const Icon(Icons.bluetooth,
+                        size: 84, color: Colors.white))),
           ),
-        ));
+        )));
   }
 
   @override
