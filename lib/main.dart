@@ -41,7 +41,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData(primarySwatch: Colors.deepPurple),
       initialRoute: '/',
       // home: user != null ? Register() : Login(),
       routes: {
@@ -54,8 +54,8 @@ class _MyAppState extends State<MyApp> {
         // user != null ? const StudentHomePage() : const Login(),
         '/staffHome': (context) => const StaffHomePage(),
         // user != null ? const StaffHomePage() : const Login(),
-        '/studentList': (context) =>
-            user != null ? const StudentList() : const Login(),
+        '/studentList': (context) => const StudentList()
+        // user != null ? const StudentList() : const Login(),
       },
     );
   }
