@@ -131,7 +131,8 @@ class _StudentHomePageState extends State<StudentHomePage> {
                           child: Row(
                             children: const [
                               SizedBox(width: 10),
-                              Icon(Icons.logout, size: 26),
+                              Icon(Icons.logout,
+                                  size: 26, color: Colors.deepPurple),
                               SizedBox(width: 10),
                               Text("Logout", style: TextStyle(fontSize: 18)),
                             ],
