@@ -72,7 +72,7 @@ class _LoginState extends State<Login> {
                 });
               } else if (email != "" && password != "") {
                 try {
-                  final User? firebaseUser = (await FirebaseAuth.instance
+                  final User? firebaseUser = await (await FirebaseAuth.instance
                           .signInWithEmailAndPassword(
                               email: email, password: password))
                       .user;
