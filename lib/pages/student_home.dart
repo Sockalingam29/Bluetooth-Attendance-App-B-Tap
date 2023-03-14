@@ -107,7 +107,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: const [
-                          Text("Attendance recorded",
+                          Text("Attendance recorded!",
                               style: TextStyle(fontSize: 20)),
                         ],
                       ),

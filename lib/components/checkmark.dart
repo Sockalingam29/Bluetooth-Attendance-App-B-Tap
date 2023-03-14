@@ -14,7 +14,7 @@ class _CheckMarkPageState extends State<CheckMarkPage> {
 
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 2), toggleValue);
+    Future.delayed(const Duration(milliseconds: 200), toggleValue);
   }
 
   void toggleValue() {
@@ -22,7 +22,7 @@ class _CheckMarkPageState extends State<CheckMarkPage> {
       checked = !checked;
     });
     // Call toggleValue again after 2 seconds
-    Future.delayed(const Duration(milliseconds: 1500), toggleValue);
+    Future.delayed(const Duration(milliseconds: 1300), toggleValue);
   }
 
   @override
