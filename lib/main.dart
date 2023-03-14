@@ -26,13 +26,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  User? user;
+  User? user = FirebaseAuth.instance.currentUser;
   bool isStudent = true;
 
   @override
   void initState() {
     super.initState();
-    user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       isStudent = user!.email!.endsWith('student.tce.edu');
     }
@@ -51,10 +50,10 @@ class _MyAppState extends State<MyApp> {
             : const Login(),
         '/login': (context) => const Login(),
         '/register': (context) => const Register(),
-        '/studentHome': (context) =>
-            user != null ? const StudentHomePage() : const Login(),
-        '/staffHome': (context) =>
-            user != null ? const StaffHomePage() : const Login(),
+        '/studentHome': (context) => const StudentHomePage(),
+        // user != null ? const StudentHomePage() : const Login(),
+        '/staffHome': (context) => const StaffHomePage(),
+        // user != null ? const StaffHomePage() : const Login(),
         '/studentList': (context) =>
             user != null ? const StudentList() : const Login(),
       },

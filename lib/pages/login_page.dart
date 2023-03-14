@@ -65,30 +65,45 @@ class _LoginState extends State<Login> {
             onPressed: () async {
               var email = _emailCtrl.text.trim();
               var password = _passwordCtrl.text.trim();
-
+              User? firebaseUser = FirebaseAuth.instance.currentUser;
               if (!email.toLowerCase().endsWith('tce.edu')) {
                 setState(() {
                   errorMsg = 'Not a valid Email';
                 });
               } else if (email != "" && password != "") {
                 try {
-                  final User? firebaseUser = await (await FirebaseAuth.instance
+                  firebaseUser = await (await FirebaseAuth.instance
                           .signInWithEmailAndPassword(
                               email: email, password: password))
                       .user;
 
                   if (firebaseUser != null) {
+                    print(firebaseUser);
                     if (email.toLowerCase().endsWith('@student.tce.edu')) {
                       Get.offNamed('/studentHome');
                     } else {
                       Get.offNamed('/staffHome');
                     }
+                  } else {
+                    print("USER IS NULL!");
                   }
                 } on FirebaseAuthException catch (e) {
                   setState(() {
                     errorMsg = e.message;
                   });
                 }
+                // finally {
+                //   if (firebaseUser != null) {
+                //     print(firebaseUser);
+                //     if (email.toLowerCase().endsWith('@student.tce.edu')) {
+                //       Get.offNamed('/studentHome');
+                //     } else {
+                //       Get.offNamed('/staffHome');
+                //     }
+                //   } else {
+                //     print("USER IS NULL!");
+                //   }
+                // }
               } else {
                 setState(() {
                   errorMsg = 'Email and Password mismatch';
