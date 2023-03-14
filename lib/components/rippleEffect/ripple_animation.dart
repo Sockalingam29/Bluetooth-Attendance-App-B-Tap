@@ -10,7 +10,7 @@ import 'circle_painter.dart';
 class RipplesAnimation extends StatefulWidget {
   const RipplesAnimation({
     Key? key,
-    this.size = 80.0,
+    this.size = 92.0,
     this.color = const Color.fromARGB(255, 77, 178, 255),
     required this.onPressed,
     required this.child,
@@ -55,7 +55,8 @@ class _RipplesAnimationState extends State<RipplesAnimation>
                 gradient: RadialGradient(
                   colors: <Color>[
                     widget.color,
-                    Color.lerp(widget.color, Colors.black, 0.2) ?? Colors.black,
+                    Color(0x007cf0),
+                    // Color.lerp(widget.color, Colors.black, 0.2) ?? Colors.black,
                   ],
                 ),
               ),
@@ -66,7 +67,8 @@ class _RipplesAnimationState extends State<RipplesAnimation>
                       curve: const CurveWave(),
                     ),
                   ),
-                  child: const Icon(Icons.bluetooth, size: 44)),
+                  child: const Icon(Icons.bluetooth,
+                      size: 72, color: Colors.white)),
             ),
           ),
         ));
