@@ -40,7 +40,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
                   await FirebaseAuth.instance.signOut();
                   Get.offNamed('/login');
                 },
-                child: const Icon(Icons.logout_sharp),
+                child: const Icon(Icons.logout_sharp, color: Colors.deepPurple),
               ),
             )
           ],
