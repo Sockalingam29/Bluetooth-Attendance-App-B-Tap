@@ -1,8 +1,8 @@
 // ignore_for_file: use_build_context_synchronously, unnecessary_new, avoid_print, depend_on_referenced_packages, unused_import
 
 // import 'dart:math';
-// import 'package:att_blue/pages/student_list.dart';
-// import 'package:att_blue/models/sub.dart';
+// import 'package:att_deepPurple/pages/student_list.dart';
+// import 'package:att_deepPurple/models/sub.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -57,72 +57,91 @@ class _StaffHomePage extends State<StaffHomePage> {
 
   Widget _takeAttendance() {
     return !isAdvertising
-        ? ElevatedButton(
-            child: const Text('Take Attendance'),
-            onPressed: () async {
-              if (!await Nearby().askLocationPermission()) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text("Location permissions not granted :(")));
-              }
+        ? SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurple,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+                child: const Text('Take Attendance'),
+                onPressed: () async {
+                  if (!await Nearby().askLocationPermission()) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text("Location permissions not granted :(")));
+                  }
 
-              if (!await Nearby().enableLocationServices()) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text("Enabling Location Service Failed :(")));
-              }
+                  if (!await Nearby().enableLocationServices()) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text("Enabling Location Service Failed :(")));
+                  }
 
-              if (!await Nearby().checkBluetoothPermission()) {
-                Nearby().askBluetoothPermission();
-                // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                //     content: Text("Bluetooth permissions not granted :(")));
-              }
+                  if (!await Nearby().checkBluetoothPermission()) {
+                    Nearby().askBluetoothPermission();
+                    // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    //     content: Text("Bluetooth permissions not granted :(")));
+                  }
 
-              if (semesterChoosen != "Select a Option" &&
-                  subjectChoosen != "Select a Option") {
-                try {
-                  userName = "TCE_Faculty $semesterChoosen $subjectChoosen";
-                  bool a = await Nearby().startAdvertising(
-                    userName,
-                    strategy,
-                    onConnectionInitiated: onConnectionInit,
-                    onConnectionResult: (id, status) {
-                      showSnackbar(status);
-                    },
-                    onDisconnected: (id) {
-                      showSnackbar(
-                          "Disconnected: ${endpointMap[id]!.endpointName}, id $id");
+                  if (semesterChoosen != "Select a Option" &&
+                      subjectChoosen != "Select a Option") {
+                    try {
+                      userName = "TCE_Faculty $semesterChoosen $subjectChoosen";
+                      bool a = await Nearby().startAdvertising(
+                        userName,
+                        strategy,
+                        onConnectionInitiated: onConnectionInit,
+                        onConnectionResult: (id, status) {
+                          showSnackbar(status);
+                        },
+                        onDisconnected: (id) {
+                          showSnackbar(
+                              "Disconnected: ${endpointMap[id]!.endpointName}, id $id");
+                          setState(() {
+                            endpointMap.remove(id);
+                          });
+                        },
+                      );
+                      showSnackbar("ADVERTISING: $a");
+
                       setState(() {
-                        endpointMap.remove(id);
+                        isAdvertising = true;
                       });
-                    },
-                  );
-                  showSnackbar("ADVERTISING: $a");
+                    } catch (exception) {
+                      showSnackbar(exception);
+                    }
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text("Please Select All Fields")));
+                  }
+                }),
+          )
+        : SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red[900],
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+                onPressed: () async {
+                  try {
+                    await Nearby().stopAdvertising();
+                    showSnackbar("Stopped Advertising");
 
-                  setState(() {
-                    isAdvertising = true;
-                  });
-                } catch (exception) {
-                  showSnackbar(exception);
-                }
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Please Select All Fields")));
-              }
-            })
-        : ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            onPressed: () async {
-              try {
-                await Nearby().stopAdvertising();
-                showSnackbar("Stopped Advertising");
-
-                setState(() {
-                  isAdvertising = false;
-                });
-              } catch (exception) {
-                showSnackbar(exception);
-              }
-            },
-            child: const Text('Stop Attendance'));
+                    setState(() {
+                      isAdvertising = false;
+                    });
+                  } catch (exception) {
+                    showSnackbar(exception);
+                  }
+                },
+                child: const Text('Stop Attendance')),
+          );
   }
 
   @override
@@ -130,13 +149,14 @@ class _StaffHomePage extends State<StaffHomePage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        backgroundColor: Colors.deepPurple,
         title: const Text("TCE Faculty"),
         actions: [
           GestureDetector(
               child: const CircleAvatar(
                 backgroundColor: Colors.white,
                 radius: 20.0,
-                child: Icon(Icons.logout_sharp),
+                child: Icon(Icons.logout_sharp, color: Colors.deepPurple),
               ),
               onTap: () async {
                 await Nearby().stopAdvertising();
@@ -146,38 +166,27 @@ class _StaffHomePage extends State<StaffHomePage> {
         ],
       ),
       body: Container(
-        height: MediaQuery.of(context).size.height * 0.45,
+        // height: MediaQuery.of(context).size.height * 0.45,
+        height: double.infinity,
         margin: EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
         padding: EdgeInsets.symmetric(
             horizontal: MediaQuery.of(context).size.height * 0.05),
         alignment: Alignment.center,
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.blue,
-            width: 2,
-          ),
-        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             //Select Semester
             Container(
-              margin: EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
+              margin: EdgeInsets.symmetric(
+                  vertical: MediaQuery.of(context).size.height * 0.02,
+                  horizontal: MediaQuery.of(context).size.height * 0.01),
               child: Row(
                 children: [
                   const Text("Choose Semester ",
                       style: TextStyle(fontSize: 13)),
                   Container(
                     margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.blue,
-                        width: 2,
-                      ),
-                      borderRadius: BorderRadius.circular(3.0),
-                    ),
                     child: DropdownButton(
                       value: semesterChoosen,
                       icon: const Icon(Icons.keyboard_arrow_down),
@@ -199,38 +208,30 @@ class _StaffHomePage extends State<StaffHomePage> {
             ),
             //Select Subject
             Container(
-              margin: EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
+              margin: EdgeInsets.symmetric(
+                  vertical: MediaQuery.of(context).size.height * 0.02,
+                  horizontal: MediaQuery.of(context).size.height * 0.01),
               child: Row(
                 children: [
                   const Text('Choose Subject     ',
                       style: TextStyle(fontSize: 13)),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.blue,
-                            width: 2,
-                          ),
-                          borderRadius: BorderRadius.circular(3.0)),
-                      child: DropdownButton(
-                        value: subjectChoosen, // Initial Value
-                        icon: const Icon(
-                            Icons.keyboard_arrow_down), // Down Arrow Icon
-                        items: subject.map((String items) {
-                          return DropdownMenuItem(
-                            value: items,
-                            child: Text(items),
-                          );
-                        }).toList(),
-                        // After selecting the desired option,it will change button value to selected value
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            subjectChoosen = newValue!;
-                          });
-                        },
-                      ),
+                  Container(
+                    child: DropdownButton(
+                      value: subjectChoosen, // Initial Value
+                      icon: const Icon(
+                          Icons.keyboard_arrow_down), // Down Arrow Icon
+                      items: subject.map((String items) {
+                        return DropdownMenuItem(
+                          value: items,
+                          child: Text(items),
+                        );
+                      }).toList(),
+                      // After selecting the desired option,it will change button value to selected value
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          subjectChoosen = newValue!;
+                        });
+                      },
                     ),
                   ),
                 ],
@@ -238,14 +239,9 @@ class _StaffHomePage extends State<StaffHomePage> {
             ),
             //Select Date
             Container(
-              margin: EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.blue,
-                  width: 2,
-                ),
-                borderRadius: BorderRadius.circular(3.0),
-              ),
+              margin: EdgeInsets.symmetric(
+                  vertical: MediaQuery.of(context).size.height * 0.02,
+                  horizontal: MediaQuery.of(context).size.height * 0.01),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 child: TextField(
@@ -280,25 +276,35 @@ class _StaffHomePage extends State<StaffHomePage> {
               child: _takeAttendance(),
             ),
             //Student List Button
-            ElevatedButton(
-                onPressed: () {
-                  // print("$semesterChoosen $subjectChoosen ${dateController.text}");
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey[600],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  onPressed: () {
+                    // print("$semesterChoosen $subjectChoosen ${dateController.text}");
 
-                  if (semesterChoosen == "Select a Option" ||
-                      subjectChoosen == "Select a Option" ||
-                      dateController.text == "") {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text("Please Select All Fields")));
-                    return;
-                  }
+                    if (semesterChoosen == "Select a Option" ||
+                        subjectChoosen == "Select a Option" ||
+                        dateController.text == "") {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text("Please Select All Fields")));
+                      return;
+                    }
 
-                  Get.toNamed('/studentList', arguments: {
-                    "semester": semesterChoosen,
-                    "subject": subjectChoosen,
-                    "date": dateController.text
-                  });
-                },
-                child: const Text("Student List")),
+                    Get.toNamed('/studentList', arguments: {
+                      "semester": semesterChoosen,
+                      "subject": subjectChoosen,
+                      "date": dateController.text
+                    });
+                  },
+                  child: const Text("Student List")),
+            ),
           ],
         ),
       ),
