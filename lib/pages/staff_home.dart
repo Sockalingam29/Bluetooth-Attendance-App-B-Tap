@@ -1,8 +1,8 @@
-// ignore_for_file: use_build_context_synchronously, unnecessary_new, avoid_print
+// ignore_for_file: use_build_context_synchronously, unnecessary_new, avoid_print, depend_on_referenced_packages, unused_import
 
 // import 'dart:math';
-// import 'package:att_blue/pages/student_list.dart';
-// import 'package:att_blue/models/sub.dart';
+// import 'package:att_deepPurple/pages/student_list.dart';
+// import 'package:att_deepPurple/models/sub.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -25,11 +25,10 @@ class _StaffHomePage extends State<StaffHomePage> {
 
   String userName = "";
   final Strategy strategy = Strategy.P2P_STAR; //1 to N
-  Map<String, ConnectionInfo> endpointMap = Map(); //connection details
+  Map<String, ConnectionInfo> endpointMap = {}; //connection details
 
   String? tempFileUri; //reference to the file currently being transferred
-  Map<int, String> map =
-      Map(); //store filename mapped to corresponding payloadId
+  Map<int, String> map = {}; //store filename mapped to corresponding payloadId
 
   @override
   void initState() {
@@ -54,54 +53,95 @@ class _StaffHomePage extends State<StaffHomePage> {
     "Subject 4",
   ];
 
+  bool isAdvertising = false;
+
   Widget _takeAttendance() {
-    return ElevatedButton(
-        child: const Text('Take Attendance'),
-        onPressed: () async {
-          if (!await Nearby().askLocationPermission()) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text("Location permissions not granted :(")));
-          }
+    return !isAdvertising
+        ? SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurple,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+                child: const Text('Take Attendance'),
+                onPressed: () async {
+                  if (!await Nearby().askLocationPermission()) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text("Location permissions not granted :(")));
+                  }
 
-          if (!await Nearby().enableLocationServices()) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text("Enabling Location Service Failed :(")));
-          }
+                  if (!await Nearby().enableLocationServices()) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text("Enabling Location Service Failed :(")));
+                  }
 
-          if (!await Nearby().checkBluetoothPermission()) {
-            Nearby().askBluetoothPermission();
-            // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            //     content: Text("Bluetooth permissions not granted :(")));
-          }
+                  if (!await Nearby().checkBluetoothPermission()) {
+                    Nearby().askBluetoothPermission();
+                    // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    //     content: Text("Bluetooth permissions not granted :(")));
+                  }
 
-          if (semesterChoosen != "Select a Option" &&
-              subjectChoosen != "Select a Option") {
-            try {
-              userName = "TCE_Faculty $semesterChoosen $subjectChoosen";
-              bool a = await Nearby().startAdvertising(
-                userName,
-                strategy,
-                onConnectionInitiated: onConnectionInit,
-                onConnectionResult: (id, status) {
-                  showSnackbar(status);
+                  if (semesterChoosen != "Select a Option" &&
+                      subjectChoosen != "Select a Option") {
+                    try {
+                      userName = "TCE_Faculty $semesterChoosen $subjectChoosen";
+                      bool a = await Nearby().startAdvertising(
+                        userName,
+                        strategy,
+                        onConnectionInitiated: onConnectionInit,
+                        onConnectionResult: (id, status) {
+                          showSnackbar(status);
+                        },
+                        onDisconnected: (id) {
+                          showSnackbar(
+                              "Disconnected: ${endpointMap[id]!.endpointName}, id $id");
+                          setState(() {
+                            endpointMap.remove(id);
+                          });
+                        },
+                      );
+                      showSnackbar("ADVERTISING: $a");
+
+                      setState(() {
+                        isAdvertising = true;
+                      });
+                    } catch (exception) {
+                      showSnackbar(exception);
+                    }
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text("Please Select All Fields")));
+                  }
+                }),
+          )
+        : SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red[900],
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+                onPressed: () async {
+                  try {
+                    await Nearby().stopAdvertising();
+                    showSnackbar("Stopped Advertising");
+
+                    setState(() {
+                      isAdvertising = false;
+                    });
+                  } catch (exception) {
+                    showSnackbar(exception);
+                  }
                 },
-                onDisconnected: (id) {
-                  showSnackbar(
-                      "Disconnected: ${endpointMap[id]!.endpointName}, id $id");
-                  setState(() {
-                    endpointMap.remove(id);
-                  });
-                },
-              );
-              showSnackbar("ADVERTISING: $a");
-            } catch (exception) {
-              showSnackbar(exception);
-            }
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Please Select All Fields")));
-          }
-        });
+                child: const Text('Stop Attendance')),
+          );
   }
 
   @override
@@ -109,91 +149,143 @@ class _StaffHomePage extends State<StaffHomePage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        backgroundColor: Colors.deepPurple,
         title: const Text("TCE Faculty"),
         actions: [
           GestureDetector(
-              child: const Icon(Icons.logout_sharp),
+              child: const CircleAvatar(
+                backgroundColor: Colors.white,
+                radius: 20.0,
+                child: Icon(Icons.logout_sharp, color: Colors.deepPurple),
+              ),
               onTap: () async {
                 await Nearby().stopAdvertising();
                 await FirebaseAuth.instance.signOut();
-                Get.toNamed('/login');
+                Get.offNamed('/login');
               }),
         ],
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(50.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text("Choose Semester"),
-              DropdownButton(
-                value: semesterChoosen,
-                icon: const Icon(Icons.keyboard_arrow_down),
-                items: semester.map((String items) {
-                  return DropdownMenuItem(
-                    value: items,
-                    child: Text(items),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    semesterChoosen = newValue!;
-                  });
-                },
+      body: Container(
+        // height: MediaQuery.of(context).size.height * 0.45,
+        height: double.infinity,
+        margin: EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
+        padding: EdgeInsets.symmetric(
+            horizontal: MediaQuery.of(context).size.height * 0.05),
+        alignment: Alignment.center,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            //Select Semester
+            Container(
+              margin: EdgeInsets.symmetric(
+                  vertical: MediaQuery.of(context).size.height * 0.02,
+                  horizontal: MediaQuery.of(context).size.height * 0.01),
+              child: Row(
+                children: [
+                  const Text("Choose Semester ",
+                      style: TextStyle(fontSize: 13)),
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: DropdownButton(
+                      value: semesterChoosen,
+                      icon: const Icon(Icons.keyboard_arrow_down),
+                      items: semester.map((String items) {
+                        return DropdownMenuItem(
+                          value: items,
+                          child: Text(items),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          semesterChoosen = newValue!;
+                        });
+                      },
+                    ),
+                  ),
+                ],
               ),
-              const Text('Choose Subject'),
-              DropdownButton(
-                value: subjectChoosen, // Initial Value
-                icon: const Icon(Icons.keyboard_arrow_down), // Down Arrow Icon
-                items: subject.map((String items) {
-                  return DropdownMenuItem(
-                    value: items,
-                    child: Text(items),
-                  );
-                }).toList(),
-                // After selecting the desired option,it will change button value to selected value
-                onChanged: (String? newValue) {
-                  setState(() {
-                    subjectChoosen = newValue!;
-                  });
-                },
+            ),
+            //Select Subject
+            Container(
+              margin: EdgeInsets.symmetric(
+                  vertical: MediaQuery.of(context).size.height * 0.02,
+                  horizontal: MediaQuery.of(context).size.height * 0.01),
+              child: Row(
+                children: [
+                  const Text('Choose Subject     ',
+                      style: TextStyle(fontSize: 13)),
+                  Container(
+                    child: DropdownButton(
+                      value: subjectChoosen, // Initial Value
+                      icon: const Icon(
+                          Icons.keyboard_arrow_down), // Down Arrow Icon
+                      items: subject.map((String items) {
+                        return DropdownMenuItem(
+                          value: items,
+                          child: Text(items),
+                        );
+                      }).toList(),
+                      // After selecting the desired option,it will change button value to selected value
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          subjectChoosen = newValue!;
+                        });
+                      },
+                    ),
+                  ),
+                ],
               ),
-              TextField(
-                controller: dateController,
-                decoration: const InputDecoration(
-                    icon: Icon(Icons.calendar_today), labelText: "Enter Date"),
-                readOnly: true,
-                onTap: (() async {
-                  DateTime? pickedDate = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime(2100),
-                  );
-                  if (pickedDate != null) {
-                    String formattedDate =
-                        DateFormat("dd-MM-yyyy").format(pickedDate);
-                    setState(() {
-                      dateController.text = formattedDate.toString();
-                    });
-                  } else {
-                    const Text("Not Selected Date!!!");
-                  }
-                }),
+            ),
+            //Select Date
+            Container(
+              margin: EdgeInsets.symmetric(
+                  vertical: MediaQuery.of(context).size.height * 0.02,
+                  horizontal: MediaQuery.of(context).size.height * 0.01),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: TextField(
+                  controller: dateController,
+                  decoration: const InputDecoration(
+                      icon: Icon(Icons.calendar_today),
+                      labelText: "Enter Date"),
+                  readOnly: true,
+                  onTap: (() async {
+                    DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2100),
+                    );
+                    if (pickedDate != null) {
+                      String formattedDate =
+                          DateFormat("dd-MM-yyyy").format(pickedDate);
+                      setState(() {
+                        dateController.text = formattedDate.toString();
+                      });
+                    } else {
+                      const Text("Not Selected Date!!!");
+                    }
+                  }),
+                ),
               ),
-              const SizedBox(
-                height: 60.0,
-              ),
-              _takeAttendance(),
-              ElevatedButton(
-                child: Text("Stop Advertising"),
-                onPressed: () async {
-                  await Nearby().stopAdvertising();
-                },
-              ),
-              ElevatedButton(
+            ),
+            //Take Attendance Button
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: _takeAttendance(),
+            ),
+            //Student List Button
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey[600],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
                   onPressed: () {
                     // print("$semesterChoosen $subjectChoosen ${dateController.text}");
 
@@ -212,8 +304,8 @@ class _StaffHomePage extends State<StaffHomePage> {
                     });
                   },
                   child: const Text("Student List")),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
