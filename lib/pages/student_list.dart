@@ -87,8 +87,7 @@ class _StudentListState extends State<StudentList> {
                               textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 30),
-                            Text(user.length.toString() +
-                                " students are present"),
+                            Text("${user.length} students are present"),
                             const SizedBox(height: 10),
                             SizedBox(
                               height: MediaQuery.of(context).size.height * 0.7,

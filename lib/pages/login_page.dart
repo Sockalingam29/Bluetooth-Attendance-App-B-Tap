@@ -1,4 +1,4 @@
-// ignore_for_file: unused_import
+// ignore_for_file: unused_import, avoid_print
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../auth.dart';
-import 'package:att_blue/pages/home_page.dart';
+// import 'package:att_blue/pages/home_page.dart';
 import 'package:att_blue/pages/staff_home.dart';
 
 class Login extends StatefulWidget {
