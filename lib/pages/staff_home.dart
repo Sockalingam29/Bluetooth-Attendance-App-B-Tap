@@ -368,7 +368,8 @@ class _StaffHomePage extends State<StaffHomePage> {
                     Get.toNamed('/studentList', arguments: {
                       "semester": semesterChoosen,
                       "subject": subjectChoosen,
-                      "date": dateController.text
+                      "date": dateController.text,
+                      "slot": slotChoosen
                     });
                   },
                   child: const Text("Student List")),

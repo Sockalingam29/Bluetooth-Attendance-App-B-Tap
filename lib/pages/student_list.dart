@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,6 +17,7 @@ class _StudentListState extends State<StudentList> {
   String date = '';
   String subject = '';
   String semester = '';
+  String slot = '';
   var userCollection;
   var userStream;
   var currentDateCollection;
@@ -25,12 +28,13 @@ class _StudentListState extends State<StudentList> {
     subject = Get.arguments['subject'];
     semester = Get.arguments['semester'];
     date = Get.arguments['date'];
+    slot = Get.arguments['slot'];
     // print(subject + " " + semester + " " + date);
-    userCollection = FirebaseFirestore.instance.collection('Users');
-    userStream = FirebaseFirestore.instance.collection('Users').snapshots();
+    userCollection = FirebaseFirestore.instance.collection('Student');
+    userStream = FirebaseFirestore.instance.collection('Student').snapshots();
 
     currentDateCollection =
-        FirebaseFirestore.instance.collection(date).doc("$semester $subject");
+        FirebaseFirestore.instance.collection(date).doc("$semester Slot $slot");
 
     currentDateStream = FirebaseFirestore.instance.collection(date).snapshots();
   }
@@ -52,10 +56,10 @@ class _StudentListState extends State<StudentList> {
                   List<dynamic> email = [];
 
                   snapshot.data!.docs.forEach((element) {
-                    if (element.id == "$semester $subject") {
+                    if (element.id == "$semester Slot $slot") {
                       Map<String, dynamic> data =
                           element.data()! as Map<String, dynamic>;
-                      email = data['email'] as List<dynamic>;
+                      email = data[subject] as List<dynamic>;
                     }
                   });
 
@@ -71,10 +75,23 @@ class _StudentListState extends State<StudentList> {
                       if (snapshot.hasData) {
                         List<Map<String, dynamic>> user = [];
                         snapshot.data!.docs.forEach((element) {
-                          Map<String, dynamic> userLocal =
-                              element.data()! as Map<String, dynamic>;
-                          if (email.contains(userLocal['Email'])) {
-                            user.add(userLocal);
+                          // print(element.data());
+                          if (element.id == "$semester Slot $slot") {
+                            // print(element.data());
+                            Map<String, dynamic> userLocal =
+                                element.data() as Map<String, dynamic>;
+
+                            // print(userLocal["Students"]);
+                            for (var i = 0;
+                                i < userLocal["Students"].length;
+                                i++) {
+                              if (email.contains(
+                                  userLocal["Students"][i]["Email"])) {
+                                user.add(userLocal["Students"][i]);
+                              }
+                            }
+                            print("here!!!");
+                            print(user);
                           }
                         });
                         // print(user);
@@ -122,70 +139,6 @@ class _StudentListState extends State<StudentList> {
                       return const Text("No Data");
                     },
                   );
-
-                  // var userData = userCollection.get();
-                  // print("First element in currentDate Collection : " +
-                  //     userData);
-                  // print("First element in currentDate Collection : " +
-                  //     userData.data()['email'][0]);
-                  //       if (currentData.data() != null) {
-                  //         userData.docs.forEach((element) {
-                  //           for (int i = 0;
-                  //               i < currentData.data()['email'].length;
-                  //               i++) {
-                  //             // print(currentData.data()['email'][i] +" " +element.data()['Email']);
-                  //             if (currentData.data()['email'][i].toString() ==
-                  //                 element.data()['Email'].toString()) {
-                  //               tmp.add(element.data());
-                  //               print("Added");
-                  //               print(element.data()['Email']);
-                  //             }
-                  //           }
-                  //           // print(element.data()['Name']);
-                  //         });
-                  //       }
-                  //       tmp.forEach((element) {
-                  //         log(element['Name']);
-                  //       });
-                  //       setState(() {
-                  //         _studentList = tmp;
-                  //         isLoaded = true;
-                  //       });
-                  //     },
-
-                  // return Column(
-                  //   children: [
-                  //     const Text(
-                  //       "Present Students: ",
-                  //       style: TextStyle(fontSize: 20),
-                  //       textAlign: TextAlign.left,
-                  //     ),
-                  //     Padding(
-                  //       padding: const EdgeInsets.all(14.0),
-                  //       child: SizedBox(
-                  //         height: 600.0,
-                  //         child: ListView.separated(
-                  //           itemCount: email.length,
-                  //           itemBuilder: (BuildContext context, int index) {
-                  //             return ListTile(
-                  //               title: Text(email[index]),
-                  //               subtitle: Text("register number"),
-                  //               tileColor:
-                  //                   const Color.fromARGB(255, 168, 197, 219),
-                  //             );
-                  //           },
-                  //           separatorBuilder:
-                  //               (BuildContext context, int index) {
-                  //             return const Divider(
-                  //               color: Colors.black,
-                  //             );
-                  //           },
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ],
-                  // );
-                  // return Text("Data");
                 }
                 return const Text("No data");
               }),
