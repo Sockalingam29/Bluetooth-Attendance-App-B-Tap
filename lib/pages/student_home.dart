@@ -26,126 +26,136 @@ class _StudentHomePageState extends State<StudentHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text("Student HomePage"),
-          backgroundColor: Colors.deepPurple,
-          actions: [
-            CircleAvatar(
-              radius: 20,
-              backgroundColor: Colors.white,
-              child: GestureDetector(
-                onTap: () async {
-                  await Nearby().stopDiscovery();
-                  await FirebaseAuth.instance.signOut();
-                  Get.offNamed('/login');
-                },
-                child: const Icon(Icons.logout_sharp, color: Colors.deepPurple),
-              ),
-            )
-          ],
-        ),
-        body: Center(
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-              if (flag == 0)
-                GestureDetector(
-                  onTap: endPointFoundHandler,
-                  child: Container(
-                      padding: const EdgeInsets.all(10),
-                      child: Column(
-                        children: [
-                          Column(
-                            children: [
-                              Container(
-                                  padding: const EdgeInsets.all(20),
-                                  margin: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: Colors.deepPurple,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.white.withOpacity(0.5),
-                                        spreadRadius: 5,
-                                        blurRadius: 7,
-                                        offset: const Offset(
-                                            0, 3), // changes position of shadow
-                                      )
-                                    ],
-                                    border: Border.all(color: Colors.grey),
-                                    borderRadius: BorderRadius.circular(72),
-                                  ),
-                                  child: const Icon(Icons.bluetooth,
-                                      size: 84, color: Colors.white)),
-                            ],
-                          ),
-                          const Text(
-                            "Tap to mark attendance",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 20,
-                            ),
-                          )
-                        ],
-                      )),
-                )
-              else if (flag == 1)
-                RipplesAnimation(
-                  onPressed: () async {
-                    print("Ripple Animation");
+    return WillPopScope(
+      onWillPop: () async {
+        await Nearby().stopDiscovery();
+        setState(() {
+          flag = 0;
+        });
+        // Allow the app to be closed
+        return true;
+      },
+      child: Scaffold(
+          appBar: AppBar(
+            title: const Text("Student HomePage"),
+            backgroundColor: Colors.deepPurple,
+            actions: [
+              CircleAvatar(
+                radius: 20,
+                backgroundColor: Colors.white,
+                child: GestureDetector(
+                  onTap: () async {
                     await Nearby().stopDiscovery();
-                    setState(() {
-                      flag = 0;
-                    });
+                    await FirebaseAuth.instance.signOut();
+                    Get.offNamed('/login');
                   },
-                  child: const Text("data"),
-                )
-              else if (flag == 2)
-                Center(
-                  child: Column(
-                    children: [
-                      const CheckMarkPage(),
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: const [
-                          Text("Attendance recorded!",
-                              style: TextStyle(fontSize: 20)),
-                        ],
-                      ),
-                      const SizedBox(height: 30),
-                      ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              flag = 0;
-                              
-                            });
-                          },
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            backgroundColor:
-                                const Color.fromARGB(255, 243, 86, 33),
-                            minimumSize: const Size(100, 60),
-                            maximumSize: const Size(150, 60),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(32.0),
-                            ),
-                          ),
-                          child: Row(
-                            children: const [
-                              SizedBox(width: 10),
-                              Icon(Icons.logout,
-                                  size: 26, color: Colors.deepPurple),
-                              SizedBox(width: 10),
-                              Text("Logout", style: TextStyle(fontSize: 18)),
-                            ],
-                          )),
-                    ],
-                  ),
+                  child:
+                      const Icon(Icons.logout_sharp, color: Colors.deepPurple),
                 ),
-            ])));
+              )
+            ],
+          ),
+          body: Center(
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                if (flag == 0)
+                  GestureDetector(
+                    onTap: endPointFoundHandler,
+                    child: Container(
+                        padding: const EdgeInsets.all(10),
+                        child: Column(
+                          children: [
+                            Column(
+                              children: [
+                                Container(
+                                    padding: const EdgeInsets.all(20),
+                                    margin: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.deepPurple,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.white.withOpacity(0.5),
+                                          spreadRadius: 5,
+                                          blurRadius: 7,
+                                          offset: const Offset(0,
+                                              3), // changes position of shadow
+                                        )
+                                      ],
+                                      border: Border.all(color: Colors.grey),
+                                      borderRadius: BorderRadius.circular(72),
+                                    ),
+                                    child: const Icon(Icons.bluetooth,
+                                        size: 84, color: Colors.white)),
+                              ],
+                            ),
+                            const Text(
+                              "Tap to mark attendance",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 20,
+                              ),
+                            )
+                          ],
+                        )),
+                  )
+                else if (flag == 1)
+                  RipplesAnimation(
+                    onPressed: () async {
+                      print("Ripple Animation");
+                      await Nearby().stopDiscovery();
+                      setState(() {
+                        flag = 0;
+                      });
+                    },
+                    child: const Text("data"),
+                  )
+                else if (flag == 2)
+                  Center(
+                    child: Column(
+                      children: [
+                        const CheckMarkPage(),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: const [
+                            Text("Attendance recorded!",
+                                style: TextStyle(fontSize: 20)),
+                          ],
+                        ),
+                        const SizedBox(height: 30),
+                        ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                flag = 0;
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor:
+                                  const Color.fromARGB(255, 243, 86, 33),
+                              minimumSize: const Size(100, 60),
+                              maximumSize: const Size(150, 60),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(32.0),
+                              ),
+                            ),
+                            child: Row(
+                              children: const [
+                                SizedBox(width: 10),
+                                Icon(Icons.logout,
+                                    size: 26, color: Colors.deepPurple),
+                                SizedBox(width: 10),
+                                Text("Logout", style: TextStyle(fontSize: 18)),
+                              ],
+                            )),
+                      ],
+                    ),
+                  ),
+              ]))),
+    );
   }
 
   void endPointFoundHandler() async {
