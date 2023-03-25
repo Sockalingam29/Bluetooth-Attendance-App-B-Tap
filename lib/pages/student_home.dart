@@ -94,6 +94,10 @@ class _StudentHomePageState extends State<StudentHomePage> {
                 RipplesAnimation(
                   onPressed: () async {
                     print("Ripple Animation");
+                    await Nearby().stopDiscovery();
+                    setState(() {
+                      flag = 0;
+                    });
                   },
                   child: const Text("data"),
                 )
@@ -116,6 +120,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
                           onPressed: () {
                             setState(() {
                               flag = 0;
+                              
                             });
                           },
                           style: ElevatedButton.styleFrom(
@@ -171,36 +176,61 @@ class _StudentHomePageState extends State<StudentHomePage> {
         onEndpointFound: (id, name, serviceId) async {
           print("endpoint found");
           print(name);
-          print("Found endpoint: $id, $name, $serviceId");
+          // print("Found endpoint: $id, $name, $serviceId");
           if (name.startsWith("TCE_Faculty")) {
             try {
               // add if not exists, else update
-              DateTime now = DateTime.now();
-              String formattedDate =
-                  '${now.day.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.year}';
+              // TCE_Facutly semester 1 oops A
+              List<String> arr = name.split(" ");
 
-              var db = FirebaseFirestore.instance
-                  .collection(formattedDate)
-                  .doc(name.replaceAll("TCE_Faculty ", ""));
-              var data = await db.get();
+              String sem = "${arr[1]} ${arr[2]}";
+              String sub = arr[3];
+              String slot = arr[4];
 
-              if (!data.exists) {
-                db.set({
-                  //append currmail to email key
-                  'email': FieldValue.arrayUnion([currEmail]),
-                });
-              } else {
-                db.update({
-                  //append currmail to email key
-                  'email': FieldValue.arrayUnion([currEmail]),
+              print("STUDENT $sem $sub $slot");
+
+              var studentDB = await FirebaseFirestore.instance
+                  .collection("Student")
+                  .doc('$sem Slot $slot');
+              var studentData = await studentDB.get();
+              // check if curr user's email is present in studentData
+              bool isStudent = false;
+              if (studentData.exists) {
+                List<dynamic> emailList = studentData['Students'];
+                print(emailList);
+                for (int i = 0; i < emailList.length; i++) {
+                  if (emailList[i]['Email'] == currEmail) {
+                    isStudent = true;
+                    break;
+                  }
+                }
+              }
+              if (isStudent) {
+                DateTime now = DateTime.now();
+                String formattedDate =
+                    '${now.day.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.year}';
+
+                var db = FirebaseFirestore.instance
+                    .collection(formattedDate)
+                    .doc("$sem Slot $slot");
+                var data = await db.get();
+
+                if (!data.exists) {
+                  db.set({
+                    '$sub': FieldValue.arrayUnion([currEmail]),
+                  });
+                } else {
+                  db.update({
+                    '$sub': FieldValue.arrayUnion([currEmail]),
+                  });
+                }
+                await Nearby().stopDiscovery();
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Attendance recorded!! :)")));
+                setState(() {
+                  flag = 2;
                 });
               }
-              await Nearby().stopDiscovery();
-              ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Attendance recorded!! :)")));
-              setState(() {
-                flag = 2;
-              });
             } on FirebaseAuthException catch (e) {
               print("Error $e");
             } catch (e) {
@@ -224,5 +254,4 @@ class _StudentHomePageState extends State<StudentHomePage> {
       content: Text(a.toString()),
     ));
   }
-
 }

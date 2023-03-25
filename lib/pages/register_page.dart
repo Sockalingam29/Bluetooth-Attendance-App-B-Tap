@@ -164,8 +164,8 @@ class _RegisterState extends State<Register> {
               _showSnackBar('Not a valid Email');
             } else {
               try {
-                var db;
-                var data;
+                DocumentReference<Map<String, dynamic>> db;
+                DocumentSnapshot<Map<String, dynamic>> data;
                 await FirebaseAuth.instance
                     .createUserWithEmailAndPassword(
                         email: email, password: password)
