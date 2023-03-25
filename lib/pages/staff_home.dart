@@ -108,9 +108,10 @@ class _StaffHomePage extends State<StaffHomePage> {
                   }
 
                   if (semesterChoosen != "Select an Option" &&
-                      subjectChoosen != "Select an Option") {
+                      subjectChoosen != "Select an Option" &&
+                      slotChoosen != "Select an Option" ) {
                     try {
-                      userName = "TCE_Faculty $semesterChoosen $subjectChoosen";
+                      userName = "TCE_Faculty $semesterChoosen $subjectChoosen $slotChoosen";
                       bool a = await Nearby().startAdvertising(
                         userName,
                         strategy,

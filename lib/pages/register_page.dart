@@ -164,32 +164,64 @@ class _RegisterState extends State<Register> {
               _showSnackBar('Not a valid Email');
             } else {
               try {
+                var db;
+                var data;
                 await FirebaseAuth.instance
                     .createUserWithEmailAndPassword(
                         email: email, password: password)
-                    .then((value) => {
+                    .then((value) async => {
                           // setState(() {
                           //   errorMsg = "Created";
                           // }),
                           _showSnackBar("Created"),
                           // print("User created to FireAuth"),
-                          FirebaseFirestore.instance
+                          db = await FirebaseFirestore.instance
                               .collection("Student")
-                              .doc("Semester $_selectedSemester Slot $_selectedSlot")
-                              .update({
-                            "Students": FieldValue.arrayUnion([
-                              {
-                                "Name": name,
-                                "Register number": regno,
-                                "Email": email,
-                                // "UserID": currentUser?.uid,
-                              }
-                            ])
-                          }),
+                              .doc(
+                                  "Semester $_selectedSemester Slot $_selectedSlot"),
+
+                          data = await db.get(),
+
+                          if (!data.exists)
+                            {
+                              db.set({
+                                "Students": FieldValue.arrayUnion([
+                                  {
+                                    "Name": name,
+                                    "Register number": regno,
+                                    "Email": email,
+                                    // "UserID": currentUser?.uid,
+                                  }
+                                ])
+                              })
+                            }
+                          else
+                            {
+                              db.update({
+                                "Students": FieldValue.arrayUnion([
+                                  {
+                                    "Name": name,
+                                    "Register number": regno,
+                                    "Email": email,
+                                    // "UserID": currentUser?.uid,
+                                  }
+                                ])
+                              })
+                            },
+
+                          //     data.update({
+                          //   "Students": FieldValue.arrayUnion([
+                          //     {
+                          //       "Name": name,
+                          //       "Register number": regno,
+                          //       "Email": email,
+                          //       // "UserID": currentUser?.uid,
+                          //     }
+                          //   ])
+                          // }),
                           _showSnackBar("Added to Database"),
                           Get.offNamed('/studentHome')
                         });
-
               } on FirebaseAuthException catch (e) {
                 print(e.code);
                 String? err = e.message;
