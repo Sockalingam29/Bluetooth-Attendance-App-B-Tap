@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../auth.dart';
-// import 'package:att_blue/pages/home_page.dart';
 import 'package:att_blue/pages/staff_home.dart';
 
 class Login extends StatefulWidget {
@@ -92,18 +91,6 @@ class _LoginState extends State<Login> {
                     errorMsg = e.message;
                   });
                 }
-                // finally {
-                //   if (firebaseUser != null) {
-                //     print(firebaseUser);
-                //     if (email.toLowerCase().endsWith('@student.tce.edu')) {
-                //       Get.offNamed('/studentHome');
-                //     } else {
-                //       Get.offNamed('/staffHome');
-                //     }
-                //   } else {
-                //     print("USER IS NULL!");
-                //   }
-                // }
               } else {
                 setState(() {
                   errorMsg = 'Email and Password mismatch';
