@@ -215,24 +215,22 @@ class _StaffHomePage extends State<StaffHomePage> {
                 children: [
                   const Text('Choose Subject     ',
                       style: TextStyle(fontSize: 13)),
-                  Container(
-                    child: DropdownButton(
-                      value: subjectChoosen, // Initial Value
-                      icon: const Icon(
-                          Icons.keyboard_arrow_down), // Down Arrow Icon
-                      items: subject.map((String items) {
-                        return DropdownMenuItem(
-                          value: items,
-                          child: Text(items),
-                        );
-                      }).toList(),
-                      // After selecting the desired option,it will change button value to selected value
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          subjectChoosen = newValue!;
-                        });
-                      },
-                    ),
+                  DropdownButton(
+                    value: subjectChoosen, // Initial Value
+                    icon: const Icon(
+                        Icons.keyboard_arrow_down), // Down Arrow Icon
+                    items: subject.map((String items) {
+                      return DropdownMenuItem(
+                        value: items,
+                        child: Text(items),
+                      );
+                    }).toList(),
+                    // After selecting the desired option,it will change button value to selected value
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        subjectChoosen = newValue!;
+                      });
+                    },
                   ),
                 ],
               ),
