@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../auth.dart';
-// import 'package:att_blue/pages/home_page.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});

@@ -245,7 +245,9 @@ class _StaffHomePage extends State<StaffHomePage> {
                   horizontal: MediaQuery.of(context).size.height * 0.01),
               child: Row(
                 children: [
+                  
                   const Text('Choose Subject', style: TextStyle(fontSize: 13)),
+
                   DropdownButton(
                     value: subjectChoosen, // Initial Value
                     icon: const Icon(

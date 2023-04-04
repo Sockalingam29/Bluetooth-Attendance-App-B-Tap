@@ -1,4 +1,5 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_function_literals_in_foreach_calls, prefer_typing_uninitialized_variables, unused_field
+
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';

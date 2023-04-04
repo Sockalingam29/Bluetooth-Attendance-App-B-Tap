@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:checkmark/checkmark.dart';
 import 'package:flutter/material.dart';
 
@@ -12,6 +14,7 @@ class _CheckMarkPageState extends State<CheckMarkPage> {
   bool checked = false;
   // set check to true in 2 sec
 
+  @override
   void initState() {
     super.initState();
     Future.delayed(const Duration(milliseconds: 200), toggleValue);
