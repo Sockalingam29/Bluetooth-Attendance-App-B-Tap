@@ -91,18 +91,6 @@ class _LoginState extends State<Login> {
                     errorMsg = e.message;
                   });
                 }
-                // finally {
-                //   if (firebaseUser != null) {
-                //     print(firebaseUser);
-                //     if (email.toLowerCase().endsWith('@student.tce.edu')) {
-                //       Get.offNamed('/studentHome');
-                //     } else {
-                //       Get.offNamed('/staffHome');
-                //     }
-                //   } else {
-                //     print("USER IS NULL!");
-                //   }
-                // }
               } else {
                 setState(() {
                   errorMsg = 'Email and Password mismatch';

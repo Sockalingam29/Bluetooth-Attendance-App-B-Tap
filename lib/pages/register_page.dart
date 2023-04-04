@@ -23,6 +23,12 @@ class _RegisterState extends State<Register> {
   final TextEditingController _emailCtrl = TextEditingController();
   final TextEditingController _passwordCtrl = TextEditingController();
   final TextEditingController _regNoCtrl = TextEditingController();
+  //Dropdown for Semester
+  String? _selectedSemester;
+  final List<String> _semester = ['Semester', '3', '4'];
+  //Dropdown for Slot
+  String? _selectedSlot;
+  final List<String> _slot = ['Slot', 'A', 'B'];
 
   User? currentUser = FirebaseAuth.instance.currentUser;
 
@@ -55,8 +61,79 @@ class _RegisterState extends State<Register> {
         ));
   }
 
+  //Widget for Dropdown for Semester
+  Widget _semesterDropdown() {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      child: DropdownButtonFormField(
+        decoration: InputDecoration(
+          hintText: 'Semester',
+          filled: true,
+          fillColor: Colors.grey.shade100,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: BorderSide.none,
+          ),
+        ),
+        value: _selectedSemester,
+        items: _semester.map((semester) {
+          return DropdownMenuItem(
+            value: semester,
+            child: Text(semester),
+          );
+        }).toList(),
+        onChanged: (value) {
+          if (value.toString() != 'Semester') {
+            setState(() {
+              _selectedSemester = value.toString();
+            });
+          }
+        },
+      ),
+    );
+  }
+
+  //Widget for Dropdown for Slot
+  Widget _slotDropdown() {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      child: DropdownButtonFormField(
+        decoration: InputDecoration(
+          hintText: 'Slot',
+          filled: true,
+          fillColor: Colors.grey.shade100,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: BorderSide.none,
+          ),
+        ),
+        value: _selectedSlot,
+        items: _slot.map((slot) {
+          return DropdownMenuItem(
+            value: slot,
+            child: Text(slot),
+          );
+        }).toList(),
+        onChanged: (value) {
+          if (value.toString() != 'Slot') {
+            setState(() {
+              _selectedSlot = value.toString();
+            });
+          }
+        },
+      ),
+    );
+  }
+
   Widget _errorMessage() {
     return Text(errorMsg == '' ? '' : 'Humm ? $errorMsg');
+  }
+
+  //Widget to show snackbar with a parameter of String
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+    ));
   }
 
   Widget _registerBtn() {
@@ -69,40 +146,85 @@ class _RegisterState extends State<Register> {
             var email = _emailCtrl.text.trim();
             var regno = _regNoCtrl.text.trim();
             var password = _passwordCtrl.text.trim();
+            // var semester = _selectedSemester;
+            // var slot = _selectedSlot;
 
-            if (!email.toLowerCase().endsWith('@student.tce.edu')) {
-              setState(() {
-                errorMsg = 'Not a valid Email';
-              });
+            if (name == '' ||
+                email == '' ||
+                regno == '' ||
+                password == '' ||
+                _selectedSemester == null ||
+                _selectedSlot == null) {
+              _showSnackBar('Please fill all the fields');
+            } else if (!email.toLowerCase().endsWith('@student.tce.edu')) {
+              // setState(() {
+              //   errorMsg = 'Not a valid Email';
+              // });
+              _showSnackBar('Not a valid Email');
             } else {
               try {
+                DocumentReference<Map<String, dynamic>> db;
+                DocumentSnapshot<Map<String, dynamic>> data;
                 await FirebaseAuth.instance
                     .createUserWithEmailAndPassword(
                         email: email, password: password)
-                    .then((value) => {
-                          setState(() {
-                            errorMsg = "Created";
-                          }),
-                          print("User created to FireAuth"),
-                          FirebaseFirestore.instance
-                              .collection("Users")
-                              .doc(currentUser?.uid)
-                              .set({
-                            "createdAt": DateTime.now(),
-                            "UserID": currentUser?.uid,
-                            "Email": email,
-                            "Name": name,
-                            "Register number": regno,
-                            "Role": "Student",
-                          }),
-                          print("Data added to Firestore")
+                    .then((value) async => {
+                          // setState(() {
+                          //   errorMsg = "Created";
+                          // }),
+                          _showSnackBar("Created"),
+                          // print("User created to FireAuth"),
+                          db = await FirebaseFirestore.instance
+                              .collection("Student")
+                              .doc(
+                                  "Semester $_selectedSemester Slot $_selectedSlot"),
+
+                          data = await db.get(),
+
+                          if (!data.exists)
+                            {
+                              db.set({
+                                "Students": FieldValue.arrayUnion([
+                                  {
+                                    "Name": name,
+                                    "Register number": regno,
+                                    "Email": email,
+                                    // "UserID": currentUser?.uid,
+                                  }
+                                ])
+                              })
+                            }
+                          else
+                            {
+                              db.update({
+                                "Students": FieldValue.arrayUnion([
+                                  {
+                                    "Name": name,
+                                    "Register number": regno,
+                                    "Email": email,
+                                    // "UserID": currentUser?.uid,
+                                  }
+                                ])
+                              })
+                            },
+
+                          //     data.update({
+                          //   "Students": FieldValue.arrayUnion([
+                          //     {
+                          //       "Name": name,
+                          //       "Register number": regno,
+                          //       "Email": email,
+                          //       // "UserID": currentUser?.uid,
+                          //     }
+                          //   ])
+                          // }),
+                          _showSnackBar("Added to Database"),
+                          Get.offNamed('/studentHome')
                         });
               } on FirebaseAuthException catch (e) {
                 print(e.code);
-                // print("Error : $e");
-                setState(() {
-                  errorMsg = e.message;
-                });
+                String? err = e.message;
+                _showSnackBar(err!);
               }
             }
           },
@@ -116,44 +238,56 @@ class _RegisterState extends State<Register> {
         ));
   }
 
+  //Fix the bottom overflowed by 54 pixels
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      //Apply safe area to avoid the notch
+
       backgroundColor: Colors.white,
       body: Container(
         height: double.infinity,
         width: double.infinity,
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Create an account',
-                style: Theme.of(context).textTheme.headline4,
-              ),
-              _entryField('Name', _nameCtrl),
-              _entryField('Email', _emailCtrl),
-              _entryField('Register Number', _regNoCtrl),
-              _entryField('Password', _passwordCtrl),
-              _errorMessage(),
-              _registerBtn(),
-              Row(
+        child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Already have an account?'),
-                  TextButton(
-                    onPressed: () {
-                      Get.offNamed('/login');
-                    },
-                    child: const Text(
-                      'Login',
-                      style: TextStyle(color: Colors.deepPurple),
-                    ),
+                  Text(
+                    'Create an account',
+                    style: Theme.of(context).textTheme.headline4,
                   ),
-                ],
-              ),
-            ]),
+                  _entryField('Name', _nameCtrl),
+                  _entryField('Email', _emailCtrl),
+                  _entryField('Register Number', _regNoCtrl),
+                  _semesterDropdown(),
+                  _slotDropdown(),
+                  _entryField('Password', _passwordCtrl),
+                  _errorMessage(),
+                  _registerBtn(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text('Already have an account?'),
+                      TextButton(
+                        onPressed: () {
+                          Get.offNamed('/login');
+                        },
+                        child: const Text(
+                          'Login',
+                          style: TextStyle(color: Colors.deepPurple),
+                        ),
+                      ),
+                    ],
+                  ),
+                ]),
+          ),
+        ),
       ),
     );
   }

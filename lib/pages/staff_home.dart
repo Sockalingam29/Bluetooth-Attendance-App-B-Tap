@@ -1,8 +1,9 @@
-// ignore_for_file: use_build_context_synchronously, unnecessary_new, avoid_print, depend_on_referenced_packages, unused_import
+// ignore_for_file: use_build_context_synchronously, unnecessary_new, avoid_print, depend_on_referenced_packages, unused_import, prefer_typing_uninitialized_variables, prefer_interpolation_to_compose_strings
 
 // import 'dart:math';
 // import 'package:att_deepPurple/pages/student_list.dart';
 // import 'package:att_deepPurple/models/sub.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,8 +20,9 @@ class StaffHomePage extends StatefulWidget {
 }
 
 class _StaffHomePage extends State<StaffHomePage> {
-  String semesterChoosen = "Select a Option";
-  String subjectChoosen = "Select a Option";
+  String semesterChoosen = "Select an Option";
+  String subjectChoosen = "Select an Option";
+  String slotChoosen = "Select an Option";
   TextEditingController dateController = TextEditingController();
 
   String userName = "";
@@ -29,31 +31,51 @@ class _StaffHomePage extends State<StaffHomePage> {
 
   String? tempFileUri; //reference to the file currently being transferred
   Map<int, String> map = {}; //store filename mapped to corresponding payloadId
+  User? user = FirebaseAuth.instance.currentUser;
+  //Current User Details from firebaseauth.instance
+
+  late final String currEmail = user?.email.toString() ?? "null";
+
+  // List of items in our dropdown menu
+  var semester = [
+    "Select an Option",
+  ];
+  var subject = [
+    "Select an Option",
+  ];
+  var slot = ["Select an Option"];
+
+  bool isAdvertising = false;
+  var semesters;
+  var subjects;
+  var slots;
+  var subjectsHandling;
 
   @override
   void initState() {
     super.initState();
     dateController.text = "";
+    // print(currEmail);
+    //Fetch the current user details from firebaseauth.instance from Faculty Collection
+    FirebaseFirestore.instance
+        .collection("Faculty")
+        .where("Email", isEqualTo: currEmail)
+        .get()
+        .then((value) {
+      for (var element in value.docs) {
+        //Get the subjects handled by the faculty
+        subjectsHandling = element.data()['SubjectsHandling'];
+        //Get the keys of the subjects handled by the faculty
+        setState(() {
+          semesters = subjectsHandling.keys;
+        });
+
+        semester.addAll(semesters);
+        semester.sort();
+        // print(semester);
+      }
+    });
   }
-
-  // List of items in our dropdown menu
-  var semester = [
-    "Select a Option",
-    "Semester 1",
-    "Semester 2",
-    "Semester 3",
-    "Semester 4",
-  ];
-
-  var subject = [
-    "Select a Option",
-    "Subject 1",
-    "Subject 2",
-    "Subject 3",
-    "Subject 4",
-  ];
-
-  bool isAdvertising = false;
 
   Widget _takeAttendance() {
     return !isAdvertising
@@ -85,10 +107,11 @@ class _StaffHomePage extends State<StaffHomePage> {
                     //     content: Text("Bluetooth permissions not granted :(")));
                   }
 
-                  if (semesterChoosen != "Select a Option" &&
-                      subjectChoosen != "Select a Option") {
+                  if (semesterChoosen != "Select an Option" &&
+                      subjectChoosen != "Select an Option" &&
+                      slotChoosen != "Select an Option" ) {
                     try {
-                      userName = "TCE_Faculty $semesterChoosen $subjectChoosen";
+                      userName = "TCE_Faculty $semesterChoosen $subjectChoosen $slotChoosen";
                       bool a = await Nearby().startAdvertising(
                         userName,
                         strategy,
@@ -189,6 +212,7 @@ class _StaffHomePage extends State<StaffHomePage> {
                     margin: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: DropdownButton(
                       value: semesterChoosen,
+                      hint: const Text("Select an Option"),
                       icon: const Icon(Icons.keyboard_arrow_down),
                       items: semester.map((String items) {
                         return DropdownMenuItem(
@@ -198,7 +222,15 @@ class _StaffHomePage extends State<StaffHomePage> {
                       }).toList(),
                       onChanged: (String? newValue) {
                         setState(() {
+                          slotChoosen = "Select an Option";
+                          subjectChoosen = "Select an Option";
                           semesterChoosen = newValue!;
+                          if (semesterChoosen != 'Select an Option') {
+                            subjects = subjectsHandling[semesterChoosen].keys;
+                            print(subjects);
+                            subject.removeRange(1, subject.length);
+                            subject.addAll(subjects);
+                          }
                         });
                       },
                     ),
@@ -213,8 +245,9 @@ class _StaffHomePage extends State<StaffHomePage> {
                   horizontal: MediaQuery.of(context).size.height * 0.01),
               child: Row(
                 children: [
-                  const Text('Choose Subject     ',
-                      style: TextStyle(fontSize: 13)),
+                  
+                  const Text('Choose Subject', style: TextStyle(fontSize: 13)),
+
                   DropdownButton(
                     value: subjectChoosen, // Initial Value
                     icon: const Icon(
@@ -228,7 +261,46 @@ class _StaffHomePage extends State<StaffHomePage> {
                     // After selecting the desired option,it will change button value to selected value
                     onChanged: (String? newValue) {
                       setState(() {
+                        slotChoosen = "Select an Option";
                         subjectChoosen = newValue!;
+                        if (semesterChoosen != 'Select an Option' &&
+                            subjectChoosen != 'Select an Option') {
+                          slots =
+                              subjectsHandling[semesterChoosen][subjectChoosen];
+                          print(slots);
+
+                          slot.removeRange(1, slot.length);
+                          slot.addAll(List<String>.from(slots));
+                        }
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+            //Select Slot
+            Container(
+              margin: EdgeInsets.symmetric(
+                  vertical: MediaQuery.of(context).size.height * 0.02,
+                  horizontal: MediaQuery.of(context).size.height * 0.01),
+              child: Row(
+                children: [
+                  const Text('Choose Slot', style: TextStyle(fontSize: 13)),
+                  DropdownButton(
+                    value: slotChoosen, // Initial Value
+                    icon: const Icon(
+                        Icons.keyboard_arrow_down), // Down Arrow Icon
+                    items: slot.map((String items) {
+                      return DropdownMenuItem(
+                        value: items,
+                        child: Text(items),
+                      );
+                    }).toList(),
+                    // After selecting the desired option,it will change button value to selected value
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        slotChoosen = newValue!;
+                        print(slotChoosen);
                       });
                     },
                   ),
@@ -287,8 +359,8 @@ class _StaffHomePage extends State<StaffHomePage> {
                   onPressed: () {
                     // print("$semesterChoosen $subjectChoosen ${dateController.text}");
 
-                    if (semesterChoosen == "Select a Option" ||
-                        subjectChoosen == "Select a Option" ||
+                    if (semesterChoosen == "Select an Option" ||
+                        subjectChoosen == "Select an Option" ||
                         dateController.text == "") {
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                           content: Text("Please Select All Fields")));
@@ -298,7 +370,8 @@ class _StaffHomePage extends State<StaffHomePage> {
                     Get.toNamed('/studentList', arguments: {
                       "semester": semesterChoosen,
                       "subject": subjectChoosen,
-                      "date": dateController.text
+                      "date": dateController.text,
+                      "slot": slotChoosen
                     });
                   },
                   child: const Text("Student List")),
