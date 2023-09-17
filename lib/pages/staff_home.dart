@@ -360,9 +360,10 @@ class _StaffHomePage extends State<StaffHomePage> {
               height: 48,
               child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey[600],
+                    backgroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
+                      side: const BorderSide(color: Colors.deepPurple),
                     ),
                   ),
                   onPressed: () {
@@ -383,7 +384,8 @@ class _StaffHomePage extends State<StaffHomePage> {
                       "slot": slotChoosen
                     });
                   },
-                  child: const Text("Student List")),
+                  child: const Text("Student List",
+                      style: TextStyle(color: Colors.deepPurple))),
             ),
           ],
         ),
