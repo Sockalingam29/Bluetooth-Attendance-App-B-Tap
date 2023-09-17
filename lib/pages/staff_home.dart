@@ -78,93 +78,104 @@ class _StaffHomePage extends State<StaffHomePage> {
   }
 
   Widget _takeAttendance() {
-    return !isAdvertising
-        ? SizedBox(
-            width: double.infinity,
-            height: 48,
-            child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
+    bool isToday =
+        dateController.text == DateFormat("dd-MM-yyyy").format(DateTime.now());
+    if (isToday) {
+      return !isAdvertising
+          ? SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepPurple,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      )),
+                  child: const Text('Take Attendance'),
+                  onPressed: () async {
+                    if (!isToday) {
+                      return;
+                    }
+                    if (!await Nearby().askLocationPermission()) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content:
+                              Text("Location permissions not granted :(")));
+                    }
+
+                    if (!await Nearby().enableLocationServices()) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content:
+                              Text("Enabling Location Service Failed :(")));
+                    }
+
+                    if (!await Nearby().checkBluetoothPermission()) {
+                      Nearby().askBluetoothPermission();
+                      // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      //     content: Text("Bluetooth permissions not granted :(")));
+                    }
+
+                    if (semesterChoosen != "Select an Option" &&
+                        subjectChoosen != "Select an Option" &&
+                        slotChoosen != "Select an Option") {
+                      try {
+                        userName =
+                            "TCE_Faculty $semesterChoosen $subjectChoosen $slotChoosen";
+                        bool a = await Nearby().startAdvertising(
+                          userName,
+                          strategy,
+                          onConnectionInitiated: onConnectionInit,
+                          onConnectionResult: (id, status) {
+                            showSnackbar(status);
+                          },
+                          onDisconnected: (id) {
+                            showSnackbar(
+                                "Disconnected: ${endpointMap[id]!.endpointName}, id $id");
+                            setState(() {
+                              endpointMap.remove(id);
+                            });
+                          },
+                        );
+                        showSnackbar("ADVERTISING: $a");
+
+                        setState(() {
+                          isAdvertising = true;
+                        });
+                      } catch (exception) {
+                        showSnackbar(exception);
+                      }
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text("Please Select All Fields")));
+                    }
+                  }),
+            )
+          : SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red[900],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
                   ),
-                ),
-                child: const Text('Take Attendance'),
-                onPressed: () async {
-                  if (!await Nearby().askLocationPermission()) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text("Location permissions not granted :(")));
-                  }
-
-                  if (!await Nearby().enableLocationServices()) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text("Enabling Location Service Failed :(")));
-                  }
-
-                  if (!await Nearby().checkBluetoothPermission()) {
-                    Nearby().askBluetoothPermission();
-                    // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    //     content: Text("Bluetooth permissions not granted :(")));
-                  }
-
-                  if (semesterChoosen != "Select an Option" &&
-                      subjectChoosen != "Select an Option" &&
-                      slotChoosen != "Select an Option" ) {
+                  onPressed: () async {
                     try {
-                      userName = "TCE_Faculty $semesterChoosen $subjectChoosen $slotChoosen";
-                      bool a = await Nearby().startAdvertising(
-                        userName,
-                        strategy,
-                        onConnectionInitiated: onConnectionInit,
-                        onConnectionResult: (id, status) {
-                          showSnackbar(status);
-                        },
-                        onDisconnected: (id) {
-                          showSnackbar(
-                              "Disconnected: ${endpointMap[id]!.endpointName}, id $id");
-                          setState(() {
-                            endpointMap.remove(id);
-                          });
-                        },
-                      );
-                      showSnackbar("ADVERTISING: $a");
+                      await Nearby().stopAdvertising();
+                      showSnackbar("Stopped Advertising");
 
                       setState(() {
-                        isAdvertising = true;
+                        isAdvertising = false;
                       });
                     } catch (exception) {
                       showSnackbar(exception);
                     }
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text("Please Select All Fields")));
-                  }
-                }),
-          )
-        : SizedBox(
-            width: double.infinity,
-            height: 48,
-            child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red[900],
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                ),
-                onPressed: () async {
-                  try {
-                    await Nearby().stopAdvertising();
-                    showSnackbar("Stopped Advertising");
-
-                    setState(() {
-                      isAdvertising = false;
-                    });
-                  } catch (exception) {
-                    showSnackbar(exception);
-                  }
-                },
-                child: const Text('Stop Attendance')),
-          );
+                  },
+                  child: const Text('Stop Attendance')),
+            );
+    } else {
+      return Container();
+    }
   }
 
   @override
@@ -245,9 +256,7 @@ class _StaffHomePage extends State<StaffHomePage> {
                   horizontal: MediaQuery.of(context).size.height * 0.01),
               child: Row(
                 children: [
-                  
                   const Text('Choose Subject', style: TextStyle(fontSize: 13)),
-
                   DropdownButton(
                     value: subjectChoosen, // Initial Value
                     icon: const Icon(
