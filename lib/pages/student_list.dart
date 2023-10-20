@@ -1,6 +1,5 @@
 // ignore_for_file: avoid_function_literals_in_foreach_calls, prefer_typing_uninitialized_variables, unused_field
 
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -24,6 +23,7 @@ class _StudentListState extends State<StudentList> {
   var currentDateCollection;
   var currentDateStream;
   var userData;
+  List<List<String>> csvData = [];
 
   _StudentListState() {
     subject = Get.arguments['subject'];
@@ -75,6 +75,7 @@ class _StudentListState extends State<StudentList> {
                       }
                       if (snapshot.hasData) {
                         List<Map<String, dynamic>> user = [];
+                        int presentCount = 0;
                         snapshot.data!.docs.forEach((element) {
                           // print(element.data());
                           if (element.id == "$semester Slot $slot") {
@@ -88,8 +89,12 @@ class _StudentListState extends State<StudentList> {
                                 i++) {
                               if (email.contains(
                                   userLocal["Students"][i]["Email"])) {
-                                user.add(userLocal["Students"][i]);
+                                userLocal["Students"][i]["Status"] = "Present";
+                                presentCount++;
+                              } else {
+                                userLocal["Students"][i]["Status"] = "Absent";
                               }
+                              user.add(userLocal["Students"][i]);
                             }
                             print("here!!!");
                             print(user);
@@ -98,30 +103,38 @@ class _StudentListState extends State<StudentList> {
                         // print(user);
                         return Column(
                           children: [
-                            const SizedBox(height: 30),
-                            const Text(
-                              "Present Students: ",
-                              style: TextStyle(fontSize: 20),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 30),
-                            Text("${user.length} students are present"),
-                            const SizedBox(height: 10),
+                            // const SizedBox(height: 30),
+                            // const Text(
+                            //   "Present Students: ",
+                            //   style: TextStyle(fontSize: 20),
+                            //   textAlign: TextAlign.center,
+                            // ),
+                            // const SizedBox(height: 30),
+                            // Text(
+                            //     "${presentCount}/${user.length} students are present"),
+                            // const SizedBox(height: 10),
                             SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.7,
+                              height: MediaQuery.of(context).size.height * 0.85,
                               child: Padding(
-                                padding: const EdgeInsets.all(14.0),
+                                padding: const EdgeInsets.all(7.0),
                                 child: ListView.separated(
                                   itemCount: user.length,
                                   itemBuilder:
                                       (BuildContext context, int index) {
                                     return ListTile(
-                                      title:
-                                          Text(user[index]['Register number']),
-                                      subtitle: Text(user[index]['Name']),
-                                      tileColor: const Color.fromARGB(
-                                          255, 168, 197, 219),
-                                    );
+                                        title: Text(
+                                            user[index]['Register number'],
+                                            style: const TextStyle(
+                                                color: Colors.white)),
+                                        subtitle: Text(user[index]['Name'],
+                                            style: const TextStyle(
+                                                color: Colors.white)),
+                                        tileColor: user[index]['Status'] ==
+                                                'Present'
+                                            ? const Color.fromRGBO(
+                                                16, 142, 54, 0.8)
+                                            : const Color.fromRGBO(
+                                                185, 5, 5, 0.8));
                                   },
                                   separatorBuilder:
                                       (BuildContext context, int index) {
