@@ -78,6 +78,7 @@ class _StudentListState extends State<StudentList> {
                         return const Center(child: CircularProgressIndicator());
                       }
                       if (snapshot.hasData) {
+                        user = [];
                         int presentCount = 0;
                         snapshot.data!.docs.forEach((element) {
                           // print(element.data());
