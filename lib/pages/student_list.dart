@@ -78,6 +78,7 @@ class _StudentListState extends State<StudentList> {
                         return const Center(child: CircularProgressIndicator());
                       }
                       if (snapshot.hasData) {
+                        user = [];
                         int presentCount = 0;
                         snapshot.data!.docs.forEach((element) {
                           // print(element.data());
@@ -124,20 +125,29 @@ class _StudentListState extends State<StudentList> {
                                   itemCount: user.length,
                                   itemBuilder:
                                       (BuildContext context, int index) {
-                                    return ListTile(
-                                        title: Text(
-                                            user[index]['Register number'],
-                                            style: const TextStyle(
-                                                color: Colors.white)),
-                                        subtitle: Text(user[index]['Name'],
-                                            style: const TextStyle(
-                                                color: Colors.white)),
-                                        tileColor: user[index]['Status'] ==
-                                                'Present'
-                                            ? const Color.fromRGBO(
-                                                16, 142, 54, 0.8)
-                                            : const Color.fromRGBO(
-                                                185, 5, 5, 0.8));
+                                    return Container(
+                                        decoration: BoxDecoration(
+                                          border: Border(
+                                            left: BorderSide(
+                                              color: user[index]['Status'] ==
+                                                      'Present'
+                                                  ? const Color.fromRGBO(
+                                                      16, 142, 54, 0.8)
+                                                  : const Color.fromRGBO(
+                                                      185,
+                                                      5,
+                                                      5,
+                                                      0.8), // Color of the left border
+                                              width:
+                                                  8.0, // Width of the left border
+                                            ),
+                                          ),
+                                        ),
+                                        child: ListTile(
+                                          title: Text(
+                                              user[index]['Register number']),
+                                          subtitle: Text(user[index]['Name']),
+                                        ));
                                   },
                                   separatorBuilder:
                                       (BuildContext context, int index) {
