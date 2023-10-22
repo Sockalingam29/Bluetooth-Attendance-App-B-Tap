@@ -1,8 +1,11 @@
 // ignore_for_file: avoid_function_literals_in_foreach_calls, prefer_typing_uninitialized_variables, unused_field
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:csv/csv.dart';
+// import 'package:path_provider/path_provider.dart';
 
 class StudentList extends StatefulWidget {
   const StudentList({super.key});
@@ -24,6 +27,7 @@ class _StudentListState extends State<StudentList> {
   var currentDateStream;
   var userData;
   List<List<String>> csvData = [];
+  List<Map<String, dynamic>> user = [];
 
   _StudentListState() {
     subject = Get.arguments['subject'];
@@ -74,7 +78,6 @@ class _StudentListState extends State<StudentList> {
                         return const Center(child: CircularProgressIndicator());
                       }
                       if (snapshot.hasData) {
-                        List<Map<String, dynamic>> user = [];
                         int presentCount = 0;
                         snapshot.data!.docs.forEach((element) {
                           // print(element.data());
@@ -114,7 +117,7 @@ class _StudentListState extends State<StudentList> {
                             //     "${presentCount}/${user.length} students are present"),
                             // const SizedBox(height: 10),
                             SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.85,
+                              height: MediaQuery.of(context).size.height * 0.8,
                               child: Padding(
                                 padding: const EdgeInsets.all(7.0),
                                 child: ListView.separated(
@@ -145,6 +148,20 @@ class _StudentListState extends State<StudentList> {
                                 ),
                               ),
                             ),
+                            SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.9,
+                                height: 48,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                  ),
+                                  onPressed: () async {
+                                    generateCSV();
+                                  },
+                                  child: const Text('Export CSV'),
+                                ))
                           ],
                         );
                         // return const Text("Data is There");
@@ -168,5 +185,51 @@ class _StudentListState extends State<StudentList> {
       body: studentListBody(),
     );
     // return StudentListBody();
+  }
+
+  Future<void> generateCSV() async {
+    // try {
+    //   var status = await Permission.manageExternalStorage.request();
+    //   if (status.isDenied) {
+    //     print("PERMISSION ERROR!!!!");
+    //     return;
+    //   }
+    // } catch (e) {
+    //   print("HERE!!");
+    //   print(e);
+    // }
+
+    List<String> rowHeader = ["Register Number", "Name", "Present/Absent"];
+    List<List<dynamic>> rows = [];
+    rows.add(rowHeader);
+    for (int i = 0; i < user.length; i++) {
+      List<dynamic> dataRow = [];
+      dataRow.add(user[i]['Register number']);
+      dataRow.add(user[i]['Name']);
+      dataRow.add(user[i]['Status']);
+      rows.add(dataRow);
+    }
+
+    try {
+      String csv = const ListToCsvConverter().convert(rows);
+      // final directory = await getExternalStorageDirectory();
+      // final String filePath = '${directory?.path}/my_data.csv';
+      final String filePath =
+          '/storage/emulated/0/Download/${date}_${semester}_${subject}_Slot-${slot}.csv';
+      final File file = File(filePath);
+      await file.writeAsString(csv);
+      print('CSV file saved to $filePath');
+      await _showSnackBar('CSV file saved to Downloads folder');
+    } catch (e) {
+      print("Error creating file!");
+      print(e);
+      _showSnackBar(e.toString());
+    }
+  }
+
+  Future<void> _showSnackBar(String message) async {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+    ));
   }
 }
