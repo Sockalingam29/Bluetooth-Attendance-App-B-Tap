@@ -30,7 +30,7 @@ https://drive.google.com/file/d/1HFzRfbAdhQ4Gnc2p1IKb_vpfLU1ZV99E/view?usp=shari
 </div>
 
 ## Download the App
-**Drive link:** https://bit.ly/tceattendance
+**Drive link:** https://drive.google.com/file/d/1cQbXP1WT1pOQxz1wibfQph7k-P2mJTVQ/view?usp=sharing
 
 **Test credentials:**
 
