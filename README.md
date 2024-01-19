@@ -3,7 +3,7 @@ Our project is a Bluetooth attendance system that can be used to take attendance
 
 The teacher has to select the semester, subject and slot for which they are taking attendance and click the submit button. Now the device starts advertising. 
 On the student's view they just click a button to start discovering. And once the faculty is detected, the data is verified, and the attendance is recorded.
-
+The teacher can also export the attendance data for any date as a CSV file.
 ## Demo
 https://drive.google.com/file/d/1HFzRfbAdhQ4Gnc2p1IKb_vpfLU1ZV99E/view?usp=sharing 
 
