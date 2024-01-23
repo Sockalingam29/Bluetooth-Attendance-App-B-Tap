@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nearby_connections/nearby_connections.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 // import 'package:flutter/animations.dart'
 
 class StudentHomePage extends StatefulWidget {
@@ -175,7 +176,13 @@ class _StudentHomePageState extends State<StudentHomePage> {
           content: Text("Bluetooth permissions not granted :(")));
     }
 
-    if (!await Nearby().askNearbyWifiPermission()) {}
+    if (!await Permission.nearbyWifiDevices.isGranted) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("NearbyWifiDevices permissions not granted :()")));
+    }
+
+    Permission.nearbyWifiDevices.request();
+
     setState(() {
       flag = 1;
     });
