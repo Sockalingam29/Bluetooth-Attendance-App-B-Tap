@@ -38,7 +38,8 @@ class _StudentHomePageState extends State<StudentHomePage> {
       },
       child: Scaffold(
           appBar: AppBar(
-            title: const Text("Student HomePage"),
+            title: const Text("Student HomePage",
+                style: TextStyle(color: Colors.white)),
             backgroundColor: Colors.deepPurple,
             actions: [
               CircleAvatar(

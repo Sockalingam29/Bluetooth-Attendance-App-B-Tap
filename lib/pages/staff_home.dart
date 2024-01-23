@@ -186,7 +186,7 @@ class _StaffHomePage extends State<StaffHomePage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Colors.deepPurple,
-        title: const Text("TCE Faculty"),
+        title: const Text("TCE Faculty", style: TextStyle(color: Colors.white)),
         actions: [
           GestureDetector(
               child: const CircleAvatar(
