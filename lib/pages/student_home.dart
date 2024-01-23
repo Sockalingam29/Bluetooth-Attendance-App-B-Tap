@@ -175,6 +175,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
           content: Text("Bluetooth permissions not granted :(")));
     }
 
+    if (!await Nearby().askNearbyWifiPermission()) {}
     setState(() {
       flag = 1;
     });
@@ -255,6 +256,9 @@ class _StudentHomePageState extends State<StudentHomePage> {
       );
       showSnackbar("DISCOVERING: $a");
     } catch (e) {
+      // print on console
+      print("Error: $e");
+
       showSnackbar(e);
     }
   }
