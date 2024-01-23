@@ -91,7 +91,8 @@ class _StaffHomePage extends State<StaffHomePage> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       )),
-                  child: const Text('Take Attendance'),
+                  child: const Text('Take Attendance',
+                      style: TextStyle(color: Colors.white)),
                   onPressed: () async {
                     if (!isToday) {
                       return;
@@ -171,7 +172,8 @@ class _StaffHomePage extends State<StaffHomePage> {
                       showSnackbar(exception);
                     }
                   },
-                  child: const Text('Stop Attendance')),
+                  child: const Text('Stop Attendance',
+                      style: TextStyle(color: Colors.white))),
             );
     } else {
       return Container();
