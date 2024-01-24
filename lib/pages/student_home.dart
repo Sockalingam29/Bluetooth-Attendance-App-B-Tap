@@ -181,7 +181,6 @@ class _StudentHomePageState extends State<StudentHomePage> {
         !await Permission.bluetoothAdvertise.isGranted ||
         !await Permission.bluetoothConnect.isGranted ||
         !await Permission.bluetoothScan.isGranted) {
-      print("Here");
       [
         Permission.bluetooth,
         Permission.bluetoothAdvertise,
