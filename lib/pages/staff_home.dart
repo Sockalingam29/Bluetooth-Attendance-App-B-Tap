@@ -98,17 +98,17 @@ class _StaffHomePage extends State<StaffHomePage> {
                     if (!isToday) {
                       return;
                     }
-                    if (!await Nearby().askLocationPermission()) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content:
-                              Text("Location permissions not granted :(")));
-                    }
+                    // if (!await Nearby().askLocationPermission()) {
+                    //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    //       content:
+                    //           Text("Location permissions not granted :(")));
+                    // }
 
-                    if (!await Nearby().enableLocationServices()) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content:
-                              Text("Enabling Location Service Failed :(")));
-                    }
+                    // if (!await Nearby().enableLocationServices()) {
+                    //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    //       content:
+                    //           Text("Enabling Location Service Failed :(")));
+                    // }
 
                     if (!await Nearby().checkBluetoothPermission()) {
                       Nearby().askBluetoothPermission();
