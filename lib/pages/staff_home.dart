@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:nearby_connections/nearby_connections.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'student_list.dart';
 
 class StaffHomePage extends StatefulWidget {
@@ -113,6 +114,18 @@ class _StaffHomePage extends State<StaffHomePage> {
                       Nearby().askBluetoothPermission();
                       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       //     content: Text("Bluetooth permissions not granted :(")));
+                    }
+
+                    while (!await Permission.bluetooth.isGranted ||
+                        !await Permission.bluetoothAdvertise.isGranted ||
+                        !await Permission.bluetoothConnect.isGranted ||
+                        !await Permission.bluetoothScan.isGranted) {
+                      [
+                        Permission.bluetooth,
+                        Permission.bluetoothAdvertise,
+                        Permission.bluetoothConnect,
+                        Permission.bluetoothScan
+                      ].request();
                     }
 
                     if (semesterChoosen != "Select an Option" &&
