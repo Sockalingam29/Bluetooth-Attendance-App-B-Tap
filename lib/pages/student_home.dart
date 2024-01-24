@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_print, use_build_context_synchronously
 
+import 'dart:io';
+
 import 'package:att_blue/components/checkmark.dart';
 import 'package:att_blue/components/rippleEffect/ripple_animation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -171,18 +173,32 @@ class _StudentHomePageState extends State<StudentHomePage> {
           const SnackBar(content: Text("Enabling Location Service Failed :(")));
     }
 
-    if (!await Nearby().checkBluetoothPermission()) {
-      Nearby().askBluetoothPermission();
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("Bluetooth permissions not granted :(")));
+    await Permission.nearbyWifiDevices.request();
+
+    Nearby().askBluetoothPermission();
+
+    while (!await Permission.bluetooth.isGranted ||
+        !await Permission.bluetoothAdvertise.isGranted ||
+        !await Permission.bluetoothConnect.isGranted ||
+        !await Permission.bluetoothScan.isGranted) {
+      print("Here");
+      [
+        Permission.bluetooth,
+        Permission.bluetoothAdvertise,
+        Permission.bluetoothConnect,
+        Permission.bluetoothScan
+      ].request();
     }
 
-    if (!await Permission.nearbyWifiDevices.isGranted) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("NearbyWifiDevices permissions not granted :()")));
-    }
+    // if (!await Nearby().checkBluetoothPermission()) {
+    //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+    //       content: Text("Bluetooth permissions not granted :(")));
+    // }
 
-    Permission.nearbyWifiDevices.request();
+    // while (!await Permission.nearbyWifiDevices.isGranted) {
+    //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+    //       content: Text("NearbyWifiDevices permissions not granted :(")));
+    // }
 
     setState(() {
       flag = 1;
@@ -266,7 +282,9 @@ class _StudentHomePageState extends State<StudentHomePage> {
     } catch (e) {
       // print on console
       print("Error: $e");
-
+      setState(() {
+        flag = 0;
+      });
       showSnackbar(e);
     }
   }
