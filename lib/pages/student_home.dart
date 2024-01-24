@@ -121,10 +121,10 @@ class _StudentHomePageState extends State<StudentHomePage> {
                       children: [
                         const CheckMarkPage(),
                         const SizedBox(height: 10),
-                        Row(
+                        const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
-                          children: const [
+                          children: [
                             Text("Attendance recorded!",
                                 style: TextStyle(fontSize: 20)),
                           ],
@@ -139,20 +139,20 @@ class _StudentHomePageState extends State<StudentHomePage> {
                             style: ElevatedButton.styleFrom(
                               foregroundColor: Colors.white,
                               backgroundColor:
-                                  const Color.fromARGB(255, 243, 86, 33),
+                                  const Color.fromARGB(255, 103, 58, 183),
                               minimumSize: const Size(100, 60),
                               maximumSize: const Size(150, 60),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(32.0),
                               ),
                             ),
-                            child: Row(
-                              children: const [
-                                SizedBox(width: 10),
+                            child: const Row(
+                              children: [
+                                SizedBox(width: 8),
                                 Icon(Icons.logout,
-                                    size: 26, color: Colors.deepPurple),
+                                    size: 26, color: Colors.white),
                                 SizedBox(width: 10),
-                                Text("Logout", style: TextStyle(fontSize: 18)),
+                                Text("Back", style: TextStyle(fontSize: 18)),
                               ],
                             )),
                       ],
