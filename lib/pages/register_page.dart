@@ -22,13 +22,24 @@ class _RegisterState extends State<Register> {
   final TextEditingController _nameCtrl = TextEditingController();
   final TextEditingController _emailCtrl = TextEditingController();
   final TextEditingController _passwordCtrl = TextEditingController();
+  final TextEditingController _confirmPasswordCtrl = TextEditingController();
   final TextEditingController _regNoCtrl = TextEditingController();
   //Dropdown for Semester
   String? _selectedSemester;
-  final List<String> _semester = ['Semester', '3', '4'];
+  final List<String> _semester = [
+    'Semester',
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8'
+  ];
   //Dropdown for Slot
   String? _selectedSlot;
-  final List<String> _slot = ['Slot', 'A', 'B'];
+  final List<String> _slot = ['Slot', 'A', 'B', 'C'];
 
   User? currentUser = FirebaseAuth.instance.currentUser;
 
@@ -146,6 +157,7 @@ class _RegisterState extends State<Register> {
             var email = _emailCtrl.text.trim();
             var regno = _regNoCtrl.text.trim();
             var password = _passwordCtrl.text.trim();
+            var confirmPassword = _confirmPasswordCtrl.text.trim();
             // var semester = _selectedSemester;
             // var slot = _selectedSlot;
 
@@ -153,9 +165,12 @@ class _RegisterState extends State<Register> {
                 email == '' ||
                 regno == '' ||
                 password == '' ||
+                confirmPassword == '' ||
                 _selectedSemester == null ||
                 _selectedSlot == null) {
               _showSnackBar('Please fill all the fields');
+            } else if (password != confirmPassword) {
+              _showSnackBar('Passwords don\'t match');
             } else if (!email.toLowerCase().endsWith('@student.tce.edu')) {
               // setState(() {
               //   errorMsg = 'Not a valid Email';
@@ -234,7 +249,7 @@ class _RegisterState extends State<Register> {
               borderRadius: BorderRadius.circular(8.0),
             ),
           ),
-          child: const Text('Register'),
+          child: const Text('Register', style: TextStyle(color: Colors.white)),
         ));
   }
 
@@ -266,6 +281,7 @@ class _RegisterState extends State<Register> {
                   _semesterDropdown(),
                   _slotDropdown(),
                   _entryField('Password', _passwordCtrl),
+                  _entryField('Confirm Password', _confirmPasswordCtrl),
                   _errorMessage(),
                   _registerBtn(),
                   Row(

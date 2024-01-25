@@ -163,6 +163,7 @@ class _StudentListState extends State<StudentList> {
                                 height: 48,
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.deepPurple,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.0),
                                     ),
@@ -170,7 +171,10 @@ class _StudentListState extends State<StudentList> {
                                   onPressed: () async {
                                     generateCSV();
                                   },
-                                  child: const Text('Export CSV'),
+                                  child: const Text('Export CSV',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      )),
                                 ))
                           ],
                         );

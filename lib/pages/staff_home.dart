@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:nearby_connections/nearby_connections.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'student_list.dart';
 
 class StaffHomePage extends StatefulWidget {
@@ -91,27 +92,40 @@ class _StaffHomePage extends State<StaffHomePage> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       )),
-                  child: const Text('Take Attendance'),
+                  child: const Text('Take Attendance',
+                      style: TextStyle(color: Colors.white)),
                   onPressed: () async {
                     if (!isToday) {
                       return;
                     }
-                    if (!await Nearby().askLocationPermission()) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content:
-                              Text("Location permissions not granted :(")));
-                    }
+                    // if (!await Nearby().askLocationPermission()) {
+                    //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    //       content:
+                    //           Text("Location permissions not granted :(")));
+                    // }
 
-                    if (!await Nearby().enableLocationServices()) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content:
-                              Text("Enabling Location Service Failed :(")));
-                    }
+                    // if (!await Nearby().enableLocationServices()) {
+                    //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    //       content:
+                    //           Text("Enabling Location Service Failed :(")));
+                    // }
 
                     if (!await Nearby().checkBluetoothPermission()) {
                       Nearby().askBluetoothPermission();
                       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       //     content: Text("Bluetooth permissions not granted :(")));
+                    }
+
+                    while (!await Permission.bluetooth.isGranted ||
+                        !await Permission.bluetoothAdvertise.isGranted ||
+                        !await Permission.bluetoothConnect.isGranted ||
+                        !await Permission.bluetoothScan.isGranted) {
+                      [
+                        Permission.bluetooth,
+                        Permission.bluetoothAdvertise,
+                        Permission.bluetoothConnect,
+                        Permission.bluetoothScan
+                      ].request();
                     }
 
                     if (semesterChoosen != "Select an Option" &&
@@ -171,7 +185,8 @@ class _StaffHomePage extends State<StaffHomePage> {
                       showSnackbar(exception);
                     }
                   },
-                  child: const Text('Stop Attendance')),
+                  child: const Text('Stop Attendance',
+                      style: TextStyle(color: Colors.white))),
             );
     } else {
       return Container();
@@ -184,7 +199,7 @@ class _StaffHomePage extends State<StaffHomePage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Colors.deepPurple,
-        title: const Text("TCE Faculty"),
+        title: const Text("TCE Faculty", style: TextStyle(color: Colors.white)),
         actions: [
           GestureDetector(
               child: const CircleAvatar(

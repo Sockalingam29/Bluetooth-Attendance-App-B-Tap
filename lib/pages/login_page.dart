@@ -103,7 +103,7 @@ class _LoginState extends State<Login> {
                 borderRadius: BorderRadius.circular(8.0),
               ),
             ),
-            child: const Text('Login')));
+            child: const Text('Login', style: TextStyle(color: Colors.white))));
   }
 
   @override

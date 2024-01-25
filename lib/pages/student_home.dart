@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_print, use_build_context_synchronously
 
+import 'dart:io';
+
 import 'package:att_blue/components/checkmark.dart';
 import 'package:att_blue/components/rippleEffect/ripple_animation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,6 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nearby_connections/nearby_connections.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 // import 'package:flutter/animations.dart'
 
 class StudentHomePage extends StatefulWidget {
@@ -37,7 +40,8 @@ class _StudentHomePageState extends State<StudentHomePage> {
       },
       child: Scaffold(
           appBar: AppBar(
-            title: const Text("Student HomePage"),
+            title: const Text("Student HomePage",
+                style: TextStyle(color: Colors.white)),
             backgroundColor: Colors.deepPurple,
             actions: [
               CircleAvatar(
@@ -117,10 +121,10 @@ class _StudentHomePageState extends State<StudentHomePage> {
                       children: [
                         const CheckMarkPage(),
                         const SizedBox(height: 10),
-                        Row(
+                        const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
-                          children: const [
+                          children: [
                             Text("Attendance recorded!",
                                 style: TextStyle(fontSize: 20)),
                           ],
@@ -135,20 +139,20 @@ class _StudentHomePageState extends State<StudentHomePage> {
                             style: ElevatedButton.styleFrom(
                               foregroundColor: Colors.white,
                               backgroundColor:
-                                  const Color.fromARGB(255, 243, 86, 33),
+                                  const Color.fromARGB(255, 103, 58, 183),
                               minimumSize: const Size(100, 60),
                               maximumSize: const Size(150, 60),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(32.0),
                               ),
                             ),
-                            child: Row(
-                              children: const [
-                                SizedBox(width: 10),
+                            child: const Row(
+                              children: [
+                                SizedBox(width: 8),
                                 Icon(Icons.logout,
-                                    size: 26, color: Colors.deepPurple),
+                                    size: 26, color: Colors.white),
                                 SizedBox(width: 10),
-                                Text("Logout", style: TextStyle(fontSize: 18)),
+                                Text("Back", style: TextStyle(fontSize: 18)),
                               ],
                             )),
                       ],
@@ -169,11 +173,31 @@ class _StudentHomePageState extends State<StudentHomePage> {
           const SnackBar(content: Text("Enabling Location Service Failed :(")));
     }
 
-    if (!await Nearby().checkBluetoothPermission()) {
-      Nearby().askBluetoothPermission();
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("Bluetooth permissions not granted :(")));
+    await Permission.nearbyWifiDevices.request();
+
+    Nearby().askBluetoothPermission();
+
+    while (!await Permission.bluetooth.isGranted ||
+        !await Permission.bluetoothAdvertise.isGranted ||
+        !await Permission.bluetoothConnect.isGranted ||
+        !await Permission.bluetoothScan.isGranted) {
+      [
+        Permission.bluetooth,
+        Permission.bluetoothAdvertise,
+        Permission.bluetoothConnect,
+        Permission.bluetoothScan
+      ].request();
     }
+
+    // if (!await Nearby().checkBluetoothPermission()) {
+    //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+    //       content: Text("Bluetooth permissions not granted :(")));
+    // }
+
+    // while (!await Permission.nearbyWifiDevices.isGranted) {
+    //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+    //       content: Text("NearbyWifiDevices permissions not granted :(")));
+    // }
 
     setState(() {
       flag = 1;
@@ -255,6 +279,11 @@ class _StudentHomePageState extends State<StudentHomePage> {
       );
       showSnackbar("DISCOVERING: $a");
     } catch (e) {
+      // print on console
+      print("Error: $e");
+      setState(() {
+        flag = 0;
+      });
       showSnackbar(e);
     }
   }

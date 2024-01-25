@@ -1,4 +1,4 @@
-package com.example.att_blue
+package com.attendance.att_blue
 
 import io.flutter.embedding.android.FlutterActivity
 
