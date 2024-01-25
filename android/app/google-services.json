@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:297638675861:android:607a27cad3a9984a0f629c",
         "android_client_info": {
-          "package_name": "com.example.att_blue"
+          "package_name": "com.attendance.att_blue"
         }
       },
       "oauth_client": [
