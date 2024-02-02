@@ -30,7 +30,7 @@ https://drive.google.com/file/d/1HFzRfbAdhQ4Gnc2p1IKb_vpfLU1ZV99E/view?usp=shari
 </div>
 
 ## Download the App
-**Drive link:** https://drive.google.com/file/d/1cQbXP1WT1pOQxz1wibfQph7k-P2mJTVQ/view?usp=sharing
+**Play Store:** https://play.google.com/store/apps/details?id=com.attendance.att_blue
 
 **Test credentials:**
 
